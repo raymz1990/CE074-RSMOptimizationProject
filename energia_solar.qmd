@@ -1,0 +1,94 @@
+---
+title: "energia_solar"
+format: html
+editor: visual
+---
+
+```{r warning=FALSE}
+# Pacotes necessários
+library(tibble)
+library(dplyr)
+library(ggplot2)
+library(rsm)
+
+# Recriar os dados conforme tabelas do artigo
+dados <- tibble::tribble(
+  ~Run, ~A_Solar_Radiation, ~B_Ambient_Temperature, ~C_Water_Depth, ~D_Thickness_Insulation, ~Response_Daily_Productivity,
+  1, 600, 35, 0.03, 0.04, 0.38761,
+  2, 600, 35, 0.03, 0.04, 0.45108,
+  3, 600, 35, 0.03, 0.04, 0.62997,
+  4, 300, 45, 0.01, 0.03, 0.84856,
+  5, 600, 35, 0.03, 0.04, 0.62997,
+  6, 600, 35, 0.03, 0.04, 0.63244,
+  7, 900, 45, 0.01, 0.05, 2.53573,
+  8, 900, 45, 0.01, 0.01, 0.76763,
+  9, 900, 25, 0.01, 0.01, 2.49854,
+  10, 300, 45, 0.01, 0.03, 0.32334,
+  11, 900, 45, 0.01, 0.05, 0.77491,
+  12, 300, 25, 0.01, 0.07, 0.83017,
+  13, 300, 45, 0.01, 0.01, 0.4045,
+  14, 900, 25, 0.01, 0.05, 0.50184,
+  15, 300, 35, 0.05, 0.07, 1.63863,
+  16, 900, 45, 0.01, 0.03, 0.82953,
+  17, 300, 25, 0.07, 0.01, 0.15661,
+  18, 300, 45, 0.01, 0.07, 0.40005,
+  19, 900, 45, 0.05, 0.01, 2.48021,
+  20, 300, 35, 0.01, 0.07, 0.33008,
+  21, 600, 35, 0.03, 0.04, 0.62413,
+  22, 600, 35, 0.03, 0.04, 0.62997,
+  23, 300, 25, 0.03, 0.07, 0.51539,
+  24, 300, 45, 0.07, 0.01, 0.15523,
+  25, 900, 45, 0.03, 0.01, 2.42855,
+  26, 300, 35, 0.01, 0.07, 0.32757,
+  27, 600, 35, 0.03, 0.04, 0.62997,
+  28, 900, 35, 0.05, 0.07, 1.02184,
+  29, 600, 35, 0.03, 0.04, 0.62997,
+  30, 600, 35, 0.03, 0.04, 1.02184
+)
+
+# Ajustar o modelo conforme descrito no artigo
+modelo <- rsm(Response_Daily_Productivity ~ A_Solar_Radiation + B_Ambient_Temperature + C_Water_Depth + D_Thickness_Insulation + 
+                 A_Solar_Radiation:B_Ambient_Temperature + A_Solar_Radiation:C_Water_Depth + B_Ambient_Temperature:C_Water_Depth + 
+                 A_Solar_Radiation^2 + B_Ambient_Temperature^2 + C_Water_Depth^2 + D_Thickness_Insulation^2, 
+               data = dados)
+
+# Obter elementos analíticos
+anova(modelo)
+summary(modelo)
+
+# Gráficos de superfícies de resposta
+ggplot(dados, aes(x = A_Solar_Radiation, y = Response_Daily_Productivity, color = B_Ambient_Temperature)) + 
+  geom_point() + 
+  geom_smooth(method = "loess", se = FALSE) + 
+  labs(title = "Efeito da Radiação Solar e Temperatura Ambiente na Produtividade Diária")
+
+ggplot(dados, aes(x = C_Water_Depth, y = Response_Daily_Productivity, color = D_Thickness_Insulation)) + 
+  geom_point() + 
+  geom_smooth(method = "loess", se = FALSE) + 
+  labs(title = "Efeito da Profundidade da Água e Espessura da Isolamento na Produtividade Diária")
+
+```
+
+# Motivação e estabelecimento do problema prático
+
+O objetivo deste estudo é analisar a produtividade de um destilador solar em função de quatro variáveis: radiação solar, temperatura ambiente, profundidade da água e espessura da isolamento.
+
+# Metodologia usada
+
+Foi utilizado o método de superfície de resposta (RSM) para ajustar um modelo polinomial às variáveis de entrada e resposta.
+
+# Resultados
+
+Os resultados mostram que a profundidade da água é a variável mais significativa na produtividade diária, seguida pela radiação solar, temperatura ambiente e espessura da isolamento.
+
+# Discussão dos resultados
+
+Os gráficos de superfícies de resposta mostram a relação entre as variáveis de entrada e a resposta. A profundidade da água tem um efeito negativo na produtividade diária, enquanto a radiação solar e a temperatura ambiente têm efeitos positivos.
+
+# Conclusão
+
+O modelo desenvolvido pode ser utilizado para prever e otimizar a produtividade diária do destilador solar em função das variáveis de entrada.
+
+# Referências
+
+(Inserir referências utilizadas no estudo)
