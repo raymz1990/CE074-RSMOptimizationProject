@@ -1,0 +1,137 @@
+project:
+  type: book
+  # pre-render: R/setup.R
+
+  # callout-appearance: simple
+  # filters:
+  #   - assets/lua/callouts.lua
+
+  # resources:
+  #   - atlas.json
+
+book:
+  title: "CE074 Controle de Processos Industriais"
+  author: ["Miqueias Teixeira da Silva", "Raymundo Eduardo Pilz"]
+  date: "today"
+  # description: |
+  #   Projeto integrador de análise do comportamento da energia solar usando a Metodologia de Resposta de Superfície
+  # cover-image: images/cover-2e-small.png
+  favicon: images/logo.jpeg
+  reader-mode: true
+  downloads: [pdf]
+  # site-url: https://
+  repo-url: https://github.com/raymz1990/CE074-RSMOptimizationProject
+  # repo-actions: [edit, issue]
+
+  # sidebar:
+  #  style: "floating"
+  #  collapse-level: 1
+  #  border: true
+  #  search: true
+
+  page-footer:
+    left: |
+      Estatística e Ciências de Dados
+    center: Universidade Federal do Paraná (UFPR)
+    right: Built with [Quarto](https://quarto.org/).
+    background: "#f8f9fa"
+  
+  chapters:
+  - index.qmd
+  
+  - part: Getting started
+    chapters: 
+    - content/chapter_I/setup.qmd
+
+  - content/references.qmd
+  
+  # appendices:
+  #   - content/appendices.Rmd
+
+bibliography: book.bib
+
+format:
+  html:
+    theme: [cosmo, assets/scss/custom.scss]    
+    tb-cap-location: bottom
+    smooth-scroll: true
+    toc-depth: 3
+    toc-title: "Nesta página"
+    code-link: true
+    code-fold: false
+    highlight-style: printing
+    code-block-bg: true
+    code-overflow: wrap
+    reference-location: margin
+    mermaid:
+      theme: neutral
+
+  # see https://pandoc.org/MANUAL.html for all options
+  pdf:
+    documentclass: assets/cls/krantz
+    classoption: krantz2
+    lof: false
+    lot: false
+    toc: false
+    toc-depth: 2
+    fig-cap-location: bottom
+    tbl-cap-location: top
+    urlcolor: "blue"
+    linkcolor: "black"
+    biblio-style: apalike
+    keep-tex: true
+    code-block-bg: "#f2f2f2"
+    code-block-border-left: "#f2f2f2"
+    code-overflow: wrap
+    mermaid:
+      theme: neutral
+    include-in-header:
+      text: |
+        \usepackage{makeidx}
+        \makeindex
+    include-after-body:
+      text: |
+        \printindex
+
+latex-auto-install: true
+
+knitr:
+  opts_chunk:
+    cache: true
+    cache.lazy: false
+    dpi: 600
+    fig.width: 5.5
+    fig.height: 3
+    out.width: "100%"
+    split: true
+    R.options:
+      knitr.graphics.auto_pdf: true
+      datatable.print.nrows: 10
+      datatable.print.class: false
+      datatable.print.keys: false
+      datatable.print.trunc.cols: TRUE
+
+  # pdf:
+    # tbl-cap-location: bottom
+    # documentclass: krantz
+    # link-citations: true
+    # colorlinks: true
+    # lot: true
+    # lof: true
+    # includes:
+    #   in_header: latex/preamble.tex
+    #   before_body: latex/before_body.tex
+    #   after_body: latex/after_body.tex
+
+  # execute:
+    # freeze: auto  
+    # echo: true 
+    # dev: "ragg_png"
+    # dpi: 740 
+    # out.width: "80%"
+    # fig.width: 6
+    # fig.asp: 0.618
+    # fig.retina: 3
+    # fig.align: "center"
+    # fig.show: "hold"
+  
