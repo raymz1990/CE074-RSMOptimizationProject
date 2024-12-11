@@ -30,6 +30,16 @@
     ]
   },
   {
+    "objectID": "index.html#apresentação",
+    "href": "index.html#apresentação",
+    "title": "CE074 Controle de Processos Industriais",
+    "section": "Apresentação",
+    "text": "Apresentação\nSlides",
+    "crumbs": [
+      "Introdução"
+    ]
+  },
+  {
     "objectID": "content/1.motivation.html",
     "href": "content/1.motivation.html",
     "title": "\n1  Motivação e Problema Prático\n",
@@ -100,6 +110,16 @@
     ]
   },
   {
+    "objectID": "content/4.conclusion.html",
+    "href": "content/4.conclusion.html",
+    "title": "4  Conclusão",
+    "section": "",
+    "text": "O presente estudo utilizou a Metodologia de Superfície de Resposta (RSM) para explorar e otimizar o desempenho de um sistema híbrido de energia solar concentrada. Os resultados obtidos permitiram identificar os fatores mais relevantes que impactam a produção de energia e o custo nivelado de eletricidade (LCOE), contribuindo para o avanço do design e operação desse tipo de sistema.\nOs modelos ajustados e as superfícies de resposta demonstraram que o desempenho do sistema híbrido é resultado de interações complexas entre os fatores experimentais.\nFoi possível identificar pontos ótimos para maximizar a produção de energia e minimizar os custos, fornecendo insights valiosos para projetos futuros.\nEste estudo destaca a relevância da aplicação de metodologias estatísticas avançadas, como a RSM, no desenvolvimento de soluções inovadoras para sistemas de energia renovável. Ao identificar os fatores críticos e propor estratégias de otimização, contribui-se para o avanço da eficiência energética e sustentabilidade, alinhando-se às demandas globais por soluções de baixo impacto ambiental. Assim, as conclusões obtidas não apenas fortalecem o embasamento teórico, mas também fornecem suporte prático para o crescimento do setor de energias renováveis.\nOs resultados do presente estudo estão amplamente alinhados com as conclusões do artigo original. Ambos destacam a importância de otimizar os fatores principais (\\(A\\), \\(B\\), \\(C\\) e \\(D\\)) e suas interações, especialmente \\(A^2\\), \\(D^2\\), \\(A:C\\) e \\(A:D\\), para melhorar a eficiência energética e reduzir custos. No entanto, as diferenças nas análises realizadas indicam oportunidades de aprofundamento, como explorar a redução da área da usina e diferentes métodos de resfriamento, contribuindo para uma visão ainda mais abrangente sobre o desempenho de sistemas CSP.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Conclusão</span>"
+    ]
+  },
+  {
     "objectID": "content/3.analysis.html",
     "href": "content/3.analysis.html",
     "title": "\n3  Análise e Resultados\n",
@@ -157,26 +177,6 @@
     "text": "3.6 Gráficos Plotly para Análise de Resposta\nFaremos uma análise utilizando o gráfico plotly para evidenciar interações entre fatores para as respostas da Produção de Energia e Custo Nivelado de Eletricidade (LCOE). A exibição dos gráficos vão de acordo com o estudo.\n\n3.6.1 Produção de Energia\n\n\n\n\n\n\n\n\n\n\nOs gráficos exibem a interação entre A (Geração Solar) e C (Quantidade de Coletores) e entre A (Geração Solar) e D (Capacidade de Armazenamento).\nNo primeiro gráfico evidencia como a combinação de diferentes níveis de geração solar e quantidade de coletores afeta a produção de energia (kWh). Observa-se uma relação crescente, onde maiores níveis de ambos os fatores aumentam a produção de energia, com uma suavidade que indica possível saturação.\nNa interação entre A (Geração Solar) e D (Capacidade de Armazenamento) ocorre a exploração entre os fatores, destacando o impacto simultâneo desses fatores na produção de energia. Nota-se que, com o aumento da capacidade de armazenamento, a energia também aumenta, mas de forma não linear, sugerindo um efeito de otimização.\n\n3.6.2 Custo Nivelado de Eletricidade (LCOE)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOs gráficos apresentados mostram as interações entre A (Geração Solar) e B (Distância entre Coletores), A (Geração Solar) e C (Quantidade de Coletores), e A (Geração Solar) e D (Capacidade de Armazenamento) no impacto sobre o LCOE (¢/kWh).\nNa interação entre A (Geração Solar) e B (Distância entre Coletores), o gráfico destaca como a combinação de níveis de geração solar e distância entre coletores influencia o custo nivelado de eletricidade (LCOE). Observa-se que o LCOE diminui consideravelmente com maiores níveis de geração solar, enquanto a distância entre coletores apresenta um efeito secundário, sugerindo que ajustes neste fator podem otimizar o LCOE dentro de uma faixa específica.\nNa interação entre A (Geração Solar) e C (Quantidade de Coletores), o gráfico evidencia uma redução do LCOE com o aumento da geração solar. A quantidade de coletores, no entanto, apresenta um efeito mais moderado, indicando que o aumento excessivo deste fator pode ter impacto limitado na redução adicional do LCOE. Assim, é possível identificar uma combinação ideal entre os dois fatores para minimizar os custos.\nA interação entre geração solar e capacidade de armazenamento mostra uma relação mais complexa. O aumento da capacidade de armazenamento, combinado com altos níveis de geração solar, reduz o LCOE de forma significativa. Porém, nota-se uma não linearidade, onde a otimização ocorre em níveis intermediários da capacidade de armazenamento.\nEssas interações demonstram que o LCOE é sensível tanto à geração solar quanto aos fatores complementares (distância entre coletores, quantidade de coletores e capacidade de armazenamento). Ajustes estratégicos nesses fatores podem reduzir custos de maneira significativa, com efeitos variando entre relações lineares e não lineares. A análise contribui para decisões mais informadas no design e operação de sistemas de energia solar.",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Análise e Resultados</span>"
-    ]
-  },
-  {
-    "objectID": "content/4.conclusion.html",
-    "href": "content/4.conclusion.html",
-    "title": "4  Conclusão",
-    "section": "",
-    "text": "O presente estudo utilizou a Metodologia de Superfície de Resposta (RSM) para explorar e otimizar o desempenho de um sistema híbrido de energia solar concentrada. Os resultados obtidos permitiram identificar os fatores mais relevantes que impactam a produção de energia e o custo nivelado de eletricidade (LCOE), contribuindo para o avanço do design e operação desse tipo de sistema.\nOs modelos ajustados e as superfícies de resposta demonstraram que o desempenho do sistema híbrido é resultado de interações complexas entre os fatores experimentais.\nFoi possível identificar pontos ótimos para maximizar a produção de energia e minimizar os custos, fornecendo insights valiosos para projetos futuros.\nEste estudo destaca a relevância da aplicação de metodologias estatísticas avançadas, como a RSM, no desenvolvimento de soluções inovadoras para sistemas de energia renovável. Ao identificar os fatores críticos e propor estratégias de otimização, contribui-se para o avanço da eficiência energética e sustentabilidade, alinhando-se às demandas globais por soluções de baixo impacto ambiental. Assim, as conclusões obtidas não apenas fortalecem o embasamento teórico, mas também fornecem suporte prático para o crescimento do setor de energias renováveis.\nOs resultados do presente estudo estão amplamente alinhados com as conclusões do artigo original. Ambos destacam a importância de otimizar os fatores principais (\\(A\\), \\(B\\), \\(C\\) e \\(D\\)) e suas interações, especialmente \\(A^2\\), \\(D^2\\), \\(A:C\\) e \\(A:D\\), para melhorar a eficiência energética e reduzir custos. No entanto, as diferenças nas análises realizadas indicam oportunidades de aprofundamento, como explorar a redução da área da usina e diferentes métodos de resfriamento, contribuindo para uma visão ainda mais abrangente sobre o desempenho de sistemas CSP.",
-    "crumbs": [
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Conclusão</span>"
-    ]
-  },
-  {
-    "objectID": "index.html#apresentação",
-    "href": "index.html#apresentação",
-    "title": "CE074 Controle de Processos Industriais",
-    "section": "Apresentação",
-    "text": "Apresentação\nSlides",
-    "crumbs": [
-      "Introdução"
     ]
   }
 ]
