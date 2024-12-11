@@ -1,0 +1,102 @@
+# Metodologia
+
+A metodologia adotada neste estudo baseia-se na aplicação da **Metodologia de Superfície de Resposta (RSM)** para a modelagem, análise e otimização de sistemas de energia solar concentrada (CSP). A RSM foi escolhida por sua capacidade de explorar eficientemente múltiplos fatores e suas interações, além de identificar configurações ideais que maximizam a eficiência e minimizam custos e impactos ambientais.
+
+## Delineamento Experimental
+
+O delineamento experimental foi estruturado para avaliar os impactos de quatro fatores principais no desempenho das plantas CSP:
+
+- **A: Geração Solar (Solar multiple)**: representa a relação entre a energia coletada e a energia necessária para atender à demanda.
+- **B: Espaçamento entre Coletores (Row spacing)**: distância entre as fileiras de coletores solares, que afeta a captura de luz solar e a ocupação de área.
+- **C: Quantidade de Coletores por Loop (Number of assemblies)**: afeta a eficiência e o custo do sistema.
+- **D: Capacidade de Armazenamento Térmico (Thermal energy storage size)**: permite a geração de energia contínua durante períodos de baixa radiação solar.
+
+Cada fator foi avaliado em três níveis, conforme as faixas estabelecidas no artigo:
+
+- **A:** 1 a 5
+- **B:** 10 a 30
+- **C:** 4 a 10
+- **D:** 5 a 15
+
+O delineamento experimental foi gerado usando o software **Design-Expert**, que permite a criação de matrizes experimentais otimizadas para RSM.
+
+## Respostas Avaliadas
+
+As respostas analisadas neste estudo incluem:
+
+1. **Produção de Energia (Energy, kWh):** a quantidade total de energia gerada pela planta CSP.
+2. **Custo Nivelado de Eletricidade (LCOE, ¢/kWh):** um indicador econômico que reflete o custo médio de geração de energia.
+3. **Consumo de Água (Water consumption, m³):** um dos principais desafios em regiões desérticas.
+4. **Fator de Capacidade (Capacity factor, %):** a relação entre a energia gerada e a capacidade máxima do sistema.
+5. **Área Ocupada (Area, acres):** um critério importante para reduzir o impacto ambiental.
+
+## Desenvolvimento do Modelo
+
+Os modelos preditivos foram desenvolvidos utilizando-se a abordagem de **superfícies de segunda ordem**. A função geral utilizada é expressa como:
+
+$$
+Y = \beta_0 + \sum^N_{i=1} \beta_i X_i + \sum^N_{i=1} \beta_{ii} X_i^2 + \sum^{N-1}_{i=1} \sum^N_{j>1} \beta_{ij} X_i X_j + \epsilon
+$$
+
+Onde:
+
+- $Y$: resposta avaliada;
+- $X_i$: fatores independentes (A, B, C, D);
+- $\beta_0, \beta_i, \beta_{ii}, \beta_{ij}$: coeficientes estimados pelo modelo;
+- $\epsilon$: erro aleatório.
+
+A Tabela 1 apresenta a matriz de delineamento experimental para o sistema híbrido, incluindo os parâmetros de entrada (A, B, C, D) e as respostas (produção de energia, fator de capacidade, LCOE, consumo de água e área).
+
+| Run	| A	| B	| C	| D	| Energia (kWh)	|  Fator de Capacidade (%) |  LCOE (¢/kWh) | Consumo de Água (m³)	| Área (Acres)	|
+|:-:|:-:|:---:|:-:|:-:|:---------:|:-----:|:------:|:------:|:---:|
+| 1	| 1	| 10	| 4	| 5	| 80901840	|  18,5 |  28,02 | 170883	| 183	| 
+| 2	| 5	| 10	| 4	| 5	| 213502480	|  48,7 |  24,81 | 457032	| 907	| 
+| 3	| 1	| 30	| 4	| 5	| 86828856	|  19,8 |  27,01 | 182988	| 548	| 
+| 4	| 5	| 30	| 4	| 5	| 212109744	|  48,4 |  25,24 | 470202	| 2721	| 
+| 5	| 1	| 10	| 10	| 5	| 72318936	|  16,5 |  29,98 | 163059	| 185	| 
+| 6	| 5	| 10	| 10	| 5	| 216170432	|  49,4 |  24,71 | 457562	| 908	| 
+| 7	| 1	| 30	| 10	| 5	| 79653408	|  18,2 |  28,37 | 177969	| 554	| 
+| 8	| 5	| 30	| 10	| 5	| 228318656	|  52,1 |  24,14 | 481062	| 2724	| 
+| 9	| 1	| 10	| 4	| 15	| 77971872	|  17,8 |  36,76 | 170378	| 183	| 
+| 10	| 5	| 10	| 4	| 15	| 333468288	|  76,1 |  20,40 | 656915	| 907	| 
+| 11	| 1	| 30	| 4	| 15	| 83925288	|  19,2 |  35,14 | 182493	| 548	| 
+| 12	| 5	| 30	| 4	| 15	| 319167552	|  72,9 |  21,22 | 644373	| 2721	| 
+| 13	| 1	| 10	| 10	| 15	| 69414704	|  15,8 |  40,81 | 162994	| 185	| 
+| 14	| 5	| 10	| 10	| 15	| 339091392	|  77,4 |  20,14 | 681640	| 908	| 
+| 15	| 1	| 30	| 10	| 15	| 76591784	|  17,5 |  37,30 | 177942	| 554	| 
+| 16	| 5	| 30	| 10	| 15	| 344158976	|  78,6 |  20,19 | 691931	| 2724	| 
+| 17	| 1	| 20	| 7	| 10	| 87385928	|  20,0 |  30,46 | 187418	| 366	| 
+| 18	| 5	| 20	| 7	| 10	| 303626368	|  69,3 |  20,78 | 610245	| 1817	| 
+| 19	| 3	| 10	| 7	| 10	| 244371072	|  55,8 |  20,25 | 478649	| 546	| 
+| 20	| 3	| 30	| 7	| 10	| 259963408	|  59,4 |  19,65 | 507318	| 1637	| 
+| 21	| 3	| 20	| 4	| 10	| 256355984	|  58,5 |  19,78 | 497265	| 1091	| 
+| 22	| 3	| 20	| 10	| 10	| 248066240	|  56,6 |  20,14 | 495255	| 1098	| 
+| 23	| 3	| 20	| 7	| 5	| 214178496	|  48,9 |  20,84 | 423034	| 1091	| 
+| 24	| 3	| 20	| 7	| 15	| 276967136	|  63,2 |  20,00 | 535398	| 1091	| 
+| 25	| 3	| 20	| 7	| 10	| 261283136	|  59,7 |  19,53 | 507792	| 1091	| 
+| 26	| 3	| 20	| 7	| 10	| 261283136	|  59,7 |  19,53 | 507792	| 1091	| 
+| 27	| 3	| 20	| 7	| 10	| 261283136	|  59,7 |  19,53 | 507792	| 1091	| 
+| 28	| 3	| 20	| 7	| 10	| 261283136	|  59,7 |  19,53 | 507792	| 1091	| 
+| 29	| 3	| 20	| 7	| 10	| 261283136	|  59,7 |  19,53 | 507792	| 1091	| 
+| 30	| 3	| 20	| 7	| 10	| 261283136	|  59,7 |  19,53 | 507792	| 1091	| 
+
+
+## Ferramentas Utilizadas
+
+As análises foram realizadas com o suporte das seguintes ferramentas:
+
+1. **System Advisor Model (SAM):** para simulação e coleta de dados reais relacionados às plantas CSP.
+2. **Design-Expert:** para o delineamento experimental e validação dos modelos.
+3. **Re:** para análise do estudo realizado e comparação dos resultados exibidos.
+
+## Etapas do Estudo
+
+O fluxo metodológico seguido neste trabalho pode ser resumido nas seguintes etapas:
+
+1. **Coleta de Dados:** obtenção de dados simulados com base nas condições climáticas de Sharjah.
+2. **Delineamento Experimental:** definição dos fatores e níveis.
+3. **Modelagem Preditiva:** ajuste dos modelos RSM para cada resposta.
+4. **Validação:** avaliação dos modelos quanto à significância estatística e capacidade preditiva.
+5. **Otimização:** determinação das configurações ideais para maximizar a eficiência e minimizar custos.
+6. **Análise Comparativa:** avaliação de diferentes configurações de plantas CSP.
+

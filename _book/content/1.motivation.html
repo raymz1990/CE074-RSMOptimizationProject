@@ -1,16 +1,10 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
-
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.6.39">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
-<meta name="author" content="Miqueias Teixeira da Silva">
-<meta name="author" content="Raymundo Eduardo Pilz">
-<meta name="dcterms.date" content="2024-12-11">
-
-<title>CE074 Controle de Processos Industriais</title>
+<title>1&nbsp; Motivação e Problema Prático – CE074 Controle de Processos Industriais</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,26 +19,25 @@ ul.task-list li input[type="checkbox"] {
 }
 </style>
 
-
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./content/1.motivation.html" rel="next">
-<link href="./images/logo.jpeg" rel="icon" type="image/jpeg">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-ff9192afc05e137288b20e4a6f267c29.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-ac71c73cbaa189950f9f06d180824138.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
-<script id="quarto-search-options" type="application/json">{
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../content/2.methodology.html" rel="next">
+<link href="../index.html" rel="prev">
+<link href="../images/logo.jpeg" rel="icon" type="image/jpeg">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ff9192afc05e137288b20e4a6f267c29.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-ac71c73cbaa189950f9f06d180824138.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
@@ -70,40 +63,30 @@ ul.task-list li input[type="checkbox"] {
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
-}</script>
-<style>html{ scroll-behavior: smooth; }</style>
-
-
+}</script><style>html{ scroll-behavior: smooth; }</style>
 </head>
-
 <body class="nav-sidebar floating">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-  <nav class="quarto-secondary-nav">
-    <div class="container-fluid d-flex">
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Introdução</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../content/1.motivation.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Motivação e Problema Prático</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
-  </nav>
-</header>
-<!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">CE074 Controle de Processos Industriais</a> 
+      <a href="../">CE074 Controle de Processos Industriais</a> 
         <div class="sidebar-tools-main tools-wide">
     <a href="https://github.com/raymz1990/CE074-RSMOptimizationProject" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-    <a href="./CE074-Controle-de-Processos-Industriais.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <a href="../CE074-Controle-de-Processos-Industriais.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
   <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
   <div class="quarto-reader-toggle-btn">
   <i class="bi"></i>
@@ -119,133 +102,92 @@ ul.task-list li input[type="checkbox"] {
         </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-        <li class="sidebar-item">
+<li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Introdução</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./content/1.motivation.html" class="sidebar-item-text sidebar-link">
+  <a href="../content/1.motivation.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Motivação e Problema Prático</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./content/2.methodology.html" class="sidebar-item-text sidebar-link">
+  <a href="../content/2.methodology.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Metodologia</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./content/3.analysis.html" class="sidebar-item-text sidebar-link">
+  <a href="../content/3.analysis.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Análise e Resultados</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./content/4.conclusion.html" class="sidebar-item-text sidebar-link">
+  <a href="../content/4.conclusion.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Conclusão</span></span></a>
   </div>
 </li>
     </ul>
-    </div>
-</nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Nesta página</h2>
-   
-  <ul>
-  <li><a href="#introdução" id="toc-introdução" class="nav-link active" data-scroll-target="#introdução">Introdução</a>
-  <ul class="collapse">
-  <li><a href="#objetivo-do-estudo" id="toc-objetivo-do-estudo" class="nav-link" data-scroll-target="#objetivo-do-estudo">Objetivo do Estudo</a></li>
-  <li><a href="#estrutura-do-relatório" id="toc-estrutura-do-relatório" class="nav-link" data-scroll-target="#estrutura-do-relatório">Estrutura do Relatório</a></li>
-  <li><a href="#apresentação" id="toc-apresentação" class="nav-link" data-scroll-target="#apresentação">Apresentação</a></li>
-  </ul></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">CE074 Controle de Processos Industriais</h1>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<h1 class="title">
+<span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Motivação e Problema Prático</span>
+</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Authors</div>
-    <div class="quarto-title-meta-contents">
-             <p>Miqueias Teixeira da Silva </p>
-             <p>Raymundo Eduardo Pilz </p>
-          </div>
-  </div>
     
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">December 11, 2024</p>
-    </div>
-  </div>
   
     
   </div>
   
 
 
-</header>
-
-
-<section id="introdução" class="level1 unnumbered">
-<h1 class="unnumbered">Introdução</h1>
-<p>A eficiência e o custo de geração de energia elétrica são temas centrais em discussões sobre sustentabilidade e inovação tecnológica. O aumento da demanda energética global impulsiona a necessidade de explorar tecnologias que combinem eficiência energética e custos reduzidos, especialmente em fontes renováveis. Entre essas fontes, a energia solar concentrada (<em>Concentrated Solar Power - CSP</em>) se destaca como uma solução promissora devido ao seu potencial para geração escalável e armazenamento térmico.</p>
-<p>Neste contexto, o presente relatório busca explorar os principais fatores que impactam a eficiência e o custo de geração de energia em sistemas de CSP. A análise é baseada no artigo intitulado <a href="[https://doi.org/10.1016/j.enconman.2024.118915"><strong>“Modelling and optimization of concentrated solar power using response surface methodology: A comparative study of air, water, and hybrid cooling technique”</strong></a>, no qual são utilizados modelos estatísticos e <strong>Metodologias de Superfícies de Resposta (RSM)</strong> para avaliar a interação entre variáveis de projeto e suas implicações nos resultados energéticos e econômicos.</p>
-<section id="objetivo-do-estudo" class="level2">
-<h2 class="anchored" data-anchor-id="objetivo-do-estudo">Objetivo do Estudo</h2>
-<p>O objetivo deste relatório é reproduzir as análises apresentadas no artigo, utilizando métodos estatísticos e técnicas de modelagem preditiva. Além disso, são investigadas as interações entre fatores de projeto, como:</p>
-<ul>
-<li>Geração Solar (Solar Multiple),</li>
-<li>Distância entre Coletores,</li>
-<li>Quantidade de Coletores, e</li>
-<li>Capacidade de Armazenamento.</li>
-</ul>
-<p>Os resultados são avaliados a partir de métricas-chave como:</p>
-<ul>
-<li>Energia gerada (kWh),</li>
-<li>Custo nivelado de energia (LCOE, ¢/kWh),</li>
-<li>Fator de capacidade (%),</li>
-<li>Consumo de água, e</li>
-<li>Área de ocupação.</li>
-</ul>
-</section>
-<section id="estrutura-do-relatório" class="level2">
-<h2 class="anchored" data-anchor-id="estrutura-do-relatório">Estrutura do Relatório</h2>
-<p>Este relatório está organizado da seguinte maneira:</p>
+</header><p>A crescente demanda global por fontes de energia sustentável e limpa tem impulsionado a busca por tecnologias inovadoras e eficientes. Entre essas tecnologias, a energia solar concentrada (CSP - Concentrated Solar Power) emerge como uma solução promissora para a geração de eletricidade em larga escala. Diferente de outras fontes renováveis, a CSP oferece vantagens significativas, como a capacidade de armazenamento térmico, permitindo a geração de energia de forma contínua, mesmo durante períodos de baixa irradiação solar.</p>
+<p>No entanto, a implantação de plantas CSP enfrenta desafios técnicos, econômicos e ambientais que limitam sua competitividade em relação a outras tecnologias, como os sistemas fotovoltaicos (PV). Entre esses desafios, destacam-se:</p>
 <ol type="1">
-<li><strong>Motivação e Problema Prático</strong>: Explanação do contexto energético e dos desafios enfrentados em sistemas CSP.</li>
-<li><strong>Metodologia</strong>: Apresentação dos delineamentos experimentais, modelos estatísticos e métodos analíticos empregados.</li>
-<li><strong>Análise e Resultados</strong>: Reproduções das análises estatísticas, incluindo quadros de ANOVA, estimativas de parâmetros, e gráficos de superfícies de resposta.</li>
-<li><strong>Conclusão</strong>: Reflexão sobre os impactos práticos do estudo e comentários sobre a metodologia utilizada.</li>
+<li>
+<strong>Altos custos iniciais</strong>: O investimento de capital necessário para a construção de uma planta CSP é substancialmente maior quando comparado aos sistemas PV.</li>
+<li>
+<strong>Eficiência energética</strong>: O desempenho das plantas CSP é altamente dependente de condições climáticas, design do sistema e configuração operacional.</li>
+<li>
+<strong>Consumo de recursos naturais</strong>: O consumo elevado de água para sistemas de resfriamento evaporativo é uma questão crítica, especialmente em regiões desérticas onde a água é escassa.</li>
+<li>
+<strong>Otimização do design</strong>: A escolha dos parâmetros de projeto, como múltiplo solar, espaçamento entre fileiras, número de coletores por loop e tamanho do armazenamento térmico, afeta diretamente a eficiência, custo e sustentabilidade das plantas CSP.</li>
 </ol>
-<p>Com esta estrutura, espera-se proporcionar uma visão clara e objetiva sobre o problema prático em questão, os métodos adotados e as conclusões alcançadas. Este trabalho não apenas reproduz os resultados do artigo, mas também busca ampliar a compreensão sobre as decisões analíticas e o impacto prático das descobertas apresentadas.</p>
-</section>
-<section id="apresentação" class="level2">
-<h2 class="anchored" data-anchor-id="apresentação">Apresentação</h2>
-<p><a href="./slides/slides.html">Slides</a></p>
+<p>Diante desses desafios, o problema prático abordado neste estudo é como projetar e otimizar plantas CSP para maximizar a eficiência energética e econômica, ao mesmo tempo em que minimiza o impacto ambiental e o consumo de recursos. O objetivo é fornecer um guia baseado em evidências para a tomada de decisões, utilizando a Metodologia de Superfície de Resposta (RSM) como ferramenta de modelagem e otimização.</p>
+<p>A RSM é particularmente adequada para este contexto, pois permite explorar de forma eficiente a interação entre múltiplos fatores de projeto, identificando configurações que maximizam a produção de energia (kWh) e minimizam o custo nivelado de eletricidade (LCOE) e o consumo de água. Por meio de um delineamento experimental bem estruturado e análises estatísticas rigorosas, é possível desenvolver modelos preditivos que orientam o design e a operação de plantas CSP, contribuindo para sua viabilidade comercial e sustentabilidade.</p>
+<p>Para ilustrar o fluxo de funcionamento das plantas CSP, a Figura 1 apresenta o esquema de um sistema de energia solar concentrada, detalhando os principais componentes e o caminho seguido pela energia térmica desde a coleta solar até a geração elétrica.</p>
+<div class="cell" data-layout-align="left">
+<div class="cell-output-display">
+<div id="fig-1" class="quarto-float quarto-figure quarto-figure-left anchored" data-fig-align="left">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/fig1.png" class="img-fluid quarto-figure quarto-figure-left figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.1: Diagrama do CSP, com três técnicas diferentes de resfriamento configuradas.
+</figcaption></figure>
+</div>
+</div>
+</div>
 
 
-</section>
-</section>
 
-</main> <!-- /main -->
-<script id="quarto-html-after-body" type="application/javascript">
+</main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
@@ -661,19 +603,19 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>
-<nav class="page-navigation">
-  <div class="nav-page nav-page-previous">
+</script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="../index.html" class="pagination-link" aria-label="Introdução">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Introdução</span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./content/1.motivation.html" class="pagination-link" aria-label="Motivação e Problema Prático">
-        <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Motivação e Problema Prático</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../content/2.methodology.html" class="pagination-link" aria-label="Metodologia">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Metodologia</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
-<footer class="footer">
-  <div class="nav-footer">
+<footer class="footer"><div class="nav-footer">
     <div class="nav-footer-left">
 <p>Estatística e Ciências de Dados</p>
 </div>   
@@ -687,7 +629,5 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </footer>
 
 
-
-
-<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

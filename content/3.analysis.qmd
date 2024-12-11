@@ -1,0 +1,636 @@
+# Análise e Resultados
+
+Este capítulo apresenta os resultados obtidos a partir da aplicação da Metodologia de Superfície de Resposta (RSM) ao sistema híbrido de energia solar concentrada. As análises foram conduzidas com base nos modelos preditivos ajustados e nos dados experimentais descritos no capítulo anterior. Os resultados são apresentados em três partes principais: análise estatística, interpretação dos gráficos de superfície e otimização.
+
+
+```{r , echo=FALSE, comment=FALSE,message=FALSE,warning=FALSE,fig.align='center'}
+# Pacotes necessários
+library(tidyverse)
+library(deSolve)
+library(rsm)
+library(ggplot2)
+library(scales)
+library(plotly)
+```
+
+## Recriando os Dados Originais
+
+Os dados originais foram recriados com o `tibble::tribble()`, o que permite a manipulação e análise.
+
+```{r}
+dados <- tibble::tribble(
+  ~run, ~solar, ~spacing, ~assemblies, ~storage, ~y1, ~y2, ~y3, ~y4, ~y5,
+  1, 1, 10, 4, 5, 80901840, 18.5, 28.02, 170883, 183,
+  2, 5, 10, 4, 5, 213502480, 48.7, 24.81, 457032, 907,
+  3, 1, 30, 4, 5, 86828856, 19.8, 27.01, 182988, 548,
+  4, 5, 30, 4, 5, 212109744, 48.4, 25.24, 470202, 2721,
+  5, 1, 10, 10, 5, 72318936, 16.5, 29.98, 163059, 185,
+  6, 5, 10, 10, 5, 216170432, 49.4, 24.71, 457562, 908,
+  7, 1, 30, 10, 5, 79653408, 18.2, 28.37, 177969, 554,
+  8, 5, 30, 10, 5, 228318656, 52.1, 24.14, 481062, 2724,
+  9, 1, 10, 4, 15, 77971872, 17.8, 36.76, 170378, 183,
+  10, 5, 10, 4, 15, 333468288, 76.1, 20.4, 656915, 907,
+  11, 1, 30, 4, 15, 83925288, 19.2, 35.14, 182493, 548,
+  12, 5, 30, 4, 15, 319167552, 72.9, 21.22, 644373, 2721,
+  13, 1, 10, 10, 15, 69414704, 15.8, 40.81, 162994, 185,
+  14, 5, 10, 10, 15, 339091392, 77.4, 20.14, 681640, 908,
+  15, 1, 30, 10, 15, 76591784, 17.5, 37.3, 177942, 554,
+  16, 5, 30, 10, 15, 344158976, 78.6, 20.19, 691931, 2724,
+  17, 1, 20, 7, 10, 87385928, 20, 30.46, 187418, 366,
+  18, 5, 20, 7, 10, 303626368, 69.3, 20.78, 610245, 1817,
+  19, 3, 10, 7, 10, 244371072, 55.8, 20.25, 478649, 546,
+  20, 3, 30, 7, 10, 259963408, 59.4, 19.65, 507318, 1637,
+  21, 3, 20, 4, 10, 256355984, 58.5, 19.78, 497265, 1091,
+  22, 3, 20, 10, 10, 248066240, 56.6, 20.14, 495255, 1098,
+  23, 3, 20, 7, 5, 214178496, 48.9, 20.84, 423034, 1091,
+  24, 3, 20, 7, 15, 276967136, 63.2, 20, 535398, 1091,
+  25, 3, 20, 7, 10, 261283136, 59.7, 19.53, 507792, 1091,
+  26, 3, 20, 7, 10, 261283136, 59.7, 19.53, 507792, 1091,
+  27, 3, 20, 7, 10, 261283136, 59.7, 19.53, 507792, 1091,
+  28, 3, 20, 7, 10, 261283136, 59.7, 19.53, 507792, 1091,
+  29, 3, 20, 7, 10, 261283136, 59.7, 19.53, 507792, 1091,
+  30, 3, 20, 7, 10, 261283136, 59.7, 19.53, 507792, 1091)
+```
+
+Para garantir que os dados foram corretamente carregados e que todas as combinações de fatores estão representadas, você pode usar a tabela de frequências com `xtabs`.
+
+```{r}
+# Verificando as combinações de fatores
+xtabs(~~solar + spacing + assemblies + storage, data = dados)
+```
+
+Isso gerará uma tabela de frequências cruzada mostrando quantas vezes cada combinação de `solar`, `spacing`, `assemblies` e `storage` aparece nos dados.
+
+Destaca-se que, na tabela de frequências, quando `solar` = 3 e `spacing` = 20, há 6 observações, resultando em um ponto central diferente de outras observações que geram valor `1`.
+
+## Análise dos Efeitos Principais
+
+Os gráficos a seguir apresentam os efeitos principais de cada variável independente sobre as respostas do experimento. Cada gráfico ilustra como os fatores experimentais, avaliados individualmente, influenciam as respostas em estudo, permitindo identificar relações lineares ou não lineares e tendências gerais.
+
+```{r}
+# analise das variaveis individualmente para cada resposta
+
+## Transformação e Preparação dos Dados para Gráficos
+plot_dados <- dados %>%
+  pivot_longer(
+    cols = starts_with("y"),
+    names_to = "y",
+    values_to = "valor_y"
+  ) %>%
+  pivot_longer(
+    cols = c(solar, spacing, assemblies, storage),
+    names_to = "variavel",
+    values_to = "valor_variavel"
+  ) %>%
+  mutate(
+    variavel = case_when(
+      variavel == "solar" ~ "A: Geração Solar (W/m²)",
+      variavel == "spacing" ~ "B: Distância entre Coletores (m)",
+      variavel == "assemblies" ~ "C: Quantidade de Coletores",
+      variavel == "storage" ~ "D: Capacidade de Armazenamento (h)",
+      TRUE ~ variavel
+    )
+  ) %>%
+  group_by(variavel, valor_variavel, y) %>%
+  summarise(media_y = mean(valor_y, na.rm = TRUE), .groups = "drop")
+
+## Função para Gerar Gráficos
+gerar_grafico <- function(data, resposta, cor, eixo_y) {
+  ggplot(data %>% filter(y == resposta),
+         aes(y = media_y, x = valor_variavel)) +
+    geom_point(size = 3, color = cor) +
+    # geom_line(aes(group = 1), color = cor) +
+    geom_smooth(method = "lm", formula = y ~ poly(x, 2), se = FALSE, color = cor) +
+    facet_wrap(~variavel, scales = "free_x", ncol = 2) +
+    labs(
+      title = "Efeitos Principais para as Respostas",
+      subtitle = paste("Médias das Variáveis para", eixo_y),
+      x = "",
+      y = eixo_y
+    ) +
+    scale_y_continuous(labels = label_number(scale_cut = cut_short_scale())) +
+    theme_classic()
+}
+
+## Gráficos para Cada Resposta
+grafico_y1 <- gerar_grafico(plot_dados, "y1", "#FF2400", "Energia (kWh)")
+grafico_y2 <- gerar_grafico(plot_dados, "y2", "#4169E1", "Fator Capacidade (%)")
+grafico_y3 <- gerar_grafico(plot_dados, "y3", "#32CD32", "LCOE (¢/kWh)")
+grafico_y4 <- gerar_grafico(plot_dados, "y4", "#FFD700", "Consumo de Água (m³)")
+grafico_y5 <- gerar_grafico(plot_dados, "y5", "#8A2BE2", "Área (Acres)")
+```
+
+
+### Produção de Energia (kWh)
+
+```{r comment=FALSE,message=FALSE,warning=FALSE, fig.cap="Figura 1: Efeitos principais sobre a produção de energia (kWh)."}
+print(grafico_y1)
+```
+
+A Figura 1 apresenta os efeitos principais de quatro variáveis experimentais na produção de energia (kWh). Os gráficos foram gerados utilizando a média das variáveis em diferentes níveis, permitindo avaliar individualmente o impacto de cada fator:
+
+1. **A: Geração Solar (W/m²)** - O aumento da geração solar resulta em um crescimento expressivo na produção de energia, com tendência de estabilização nos níveis mais altos.
+2. **B: Distância entre Coletores (m)** - Apresenta uma relação não linear, indicando um ponto ótimo de espaçamento que maximiza a produção de energia.
+3. **C: Quantidade de Coletores** - O número de coletores influencia positivamente a produção de energia, mas também apresenta um efeito de saturação.
+4. **D: Capacidade de Armazenamento (h)** - A capacidade de armazenamento térmico apresenta uma relação parabólica, sugerindo um ponto ideal para maximizar a produção de energia.
+
+### Fator de Capacidade (%)
+
+```{r comment=FALSE,message=FALSE,warning=FALSE, fig.cap="Figura 2: Efeitos principais sobre o fator de capacidade (%)."}
+print(grafico_y2)
+```
+
+A Figura 2 ilustra o efeito semelhante ao exibido na Figura 1, sendo assim, o resultado é o mesmo que entendido no gráfico anterior.
+
+
+### LCOE (¢/kWh)
+
+```{r comment=FALSE,message=FALSE,warning=FALSE, fig.cap="Figura 3: Efeitos principais sobre o custo nivelado de eletricidade (¢/kWh)."}
+print(grafico_y3)
+```
+
+A Figura 3 apresenta os efeitos principais das variáveis sobre o custo nivelado de eletricidade (LCOE, ¢/kWh). As variáveis apresentam curva com a concavidade para baixo, indicando pontos de mínimo:
+
+- **A: Geração Solar**: Exibe uma relação decrescente inicialmente, indicando que o aumento do múltiplo solar reduz significativamente o LCOE até um ponto de estabilidade, seguido por uma leve elevação.
+- **B: Distância entre Coletores**: Apresenta uma curva em formato de U, com um valor mínimo para LCOE em distâncias intermediárias.
+- **C: Quantidade de Coletores**: Demonstra uma relação semelhante à variável B, com uma curva em formato de U, onde configurações intermediárias de coletores minimizam o LCOE.
+- **D: Capacidade de Armazenamento**: A curva em formato de U também é evidente, indicando que capacidades intermediárias são mais eficientes em termos de custo.
+
+### Consumo de Água (m³)
+
+
+```{r comment=FALSE,message=FALSE,warning=FALSE, fig.cap="Figura 4: Efeitos principais sobre o consumo de água (m³)."}
+print(grafico_y4)
+```
+
+Novamente observamos, uma composição semelhante à exibida na Figura 1 para todos os fatores, concavidade para cima, indicando pontos de máximo.
+
+### Área (Acres)
+
+```{r comment=FALSE,message=FALSE,warning=FALSE, fig.cap="Figura 5: Efeitos principais sobre a área ocupada (acres)."}
+print(grafico_y5)
+```
+
+A Figura 4 apresenta os efeitos principais das variáveis experimentais sobre a área ocupada (em acres). As variáveis analisadas são:
+
+- **A: Geração Solar**: Exibe um comportamento linear crescente, indicando que à medida que o múltiplo solar aumenta, a área ocupada também cresce proporcionalmente.
+- **B: Distância entre Coletores**: Também apresenta uma relação linear crescente, evidenciando que distâncias maiores requerem mais espaço total.
+- **C: Quantidade de Coletores**: Mostra-se constante, sugerindo que variações na quantidade de coletores não impactam a área total ocupada significativamente.
+- **D: Capacidade de Armazenamento**: Assim como a variável C, permanece constante, indicando que o armazenamento térmico não influencia a área diretamente.
+
+## Codificação dos Fatores
+
+Para permitir a análise da Metodologia de Superfície de Resposta (RSM), os fatores experimentais foram codificados para centralizar os dados e facilitar a interpretação dos coeficientes estimados no modelo. As fórmulas de codificação utilizadas foram:
+
+- **A (solar)**: $A = \frac{\text{solar} - 3}{2}$
+- **B (spacing)**: $B = \frac{\text{spacing} - 20}{10}$
+- **C (assemblies)**: $C = \frac{\text{assemblies} - 7}{3}$
+- **D (storage)**: $D = \frac{\text{storage} - 10}{5}$
+
+```{r , echo=FALSE, comment=FALSE,message=FALSE,warning=FALSE,fig.align='center'}
+# Codificação dos Fatores
+dados_coded <- rsm::coded.data(
+  dados,
+  A ~ (solar - 3) / 2,
+  B ~ (spacing - 20) / 10,
+  C ~ (assemblies - 7) / 3,
+  D ~ (storage - 10) / 5
+)
+```
+
+
+Os dados codificados foram armazenados utilizando a função `coded.data` do pacote `rsm`. As tabelas a seguir apresentam os dados após a codificação.
+
+```{r echo=FALSE}
+print(dados_coded, decode = FALSE)
+```
+
+## Ajuste dos Modelos de Resposta
+
+Para a criação dos modelos para análise, serão utilizados somente as respostas do $y1$ (**Produção de Energia**) e $y3$ (**LCOE**).
+
+### Modelo para Produção de Energia (kWh)
+
+Um modelo quadrático foi ajustado para a produção de energia $y_1$, incluindo efeitos de ordem superior (interações e termos quadráticos). A análise de variância (ANOVA) mostrou resultados altamente significativos com $p < 0.001$ para diversos termos, como ilustrado abaixo:
+
+```{r echo=FALSE}
+m_y1 <- rsm::rsm(y1 ~ SO(A, B, C, D), data = dados_coded)
+
+summary(m_y1)
+anova(m_y1)
+```
+
+
+Podemos inferir os seguintes fatores como significativos, que vão de encontro com o estudo apresentado no artigo:
+
+- **$A$**,
+- **$D$**,
+- **$A:C$**,
+- **$A^2$**,
+- **$D^2$** 
+
+```{r , echo=FALSE, comment=FALSE,message=FALSE,warning=FALSE,fig.align='center'}
+# Gráfico de Pareto para y1 e y3
+gerar_pareto <- function(model, response) {
+  t_critico <- qt(0.025, df.residual(model), lower.tail = FALSE)
+  MSE <- deviance(model) / df.residual(model)
+  SE_coef <- sqrt(MSE / nrow(model$model))
+  t0 <- coef(model) / SE_coef
+  t0 <- data.frame(Termos = names(t0)[-1], Efeito = abs(t0[-1]))
+  
+  ggplot(t0, aes(x = reorder(Termos, Efeito), y = Efeito)) +
+    geom_bar(stat = "identity", fill = "lightgreen", color = "darkgreen") +
+    geom_hline(yintercept = t_critico, linetype = "dashed", color = "red") +
+    coord_flip() +
+    labs(
+      title = paste("Gráfico de Pareto dos Efeitos"),
+      subtitle = paste("Resposta:", response),
+      x = "Termos",
+      y = "Efeitos Padronizados"
+    ) +
+    theme_classic()
+}
+```
+
+O gráfico abaixo evidencia que o fator A (Geração Solar) apresenta o maior impacto sobre a produção de energia, seguido pelos termos quadráticos de $A^2$ e interações, como $A:D$.
+
+```{r comment=FALSE,message=FALSE,warning=FALSE, fig.cap="Figura 6: Gráfico de Pareto para Energia (kWh)."}
+pareto_y1 <- gerar_pareto(m_y1, "Energy (kWh)")
+print(pareto_y1)
+```
+
+
+### Modelo para Custo Nivelado de Eletricidade (LCOE)
+
+O mesmo procedimento foi utilizado para ajustar o modelo de resposta para $y_3$ LCOE. 
+
+```{r echo=FALSE}
+m_y3 <- rsm::rsm(y3 ~ SO(A, B, C, D), data = dados_coded)
+
+summary(m_y3)
+anova(m_y3)
+```
+
+Os resultados indicam que os fatores $A$, $B$, $C$, e $D$, bem como interações $A:B$, $A:C$ e $A:D$ e $A^2$ e $D^2$ são estatisticamente significativos.
+
+Abaixo, a representação gráfica para o custo nivelado de eletricidade, evidenciando o termo $A^2$ e a interação $A:D$ com maior influência.
+
+```{r comment=FALSE,message=FALSE,warning=FALSE, fig.cap="Figura 7: Gráfico de Pareto para LCOE (¢/kWh)."}
+
+pareto_y3 <- gerar_pareto(m_y3, "LCOE (¢/kWh)")
+print(pareto_y3)
+```
+
+
+
+## Superfícies de Resposta
+
+A análise das superfícies de resposta proporciona uma visão detalhada sobre as interações entre os fatores experimentais e suas influências nas respostas analisadas.
+
+Ela tende a apresentar uma visão semelhante a verificada na análise dos efeitos principais.
+
+
+```{r, eval=TRUE, error=TRUE, warning=FALSE, message=FALSE}
+# Superfícies de Resposta
+gerar_superficie <- function(model, var_x, var_y, fixed_vars, response) {
+  par(mfrow = c(1, 1))
+  contour(
+    model, 
+    ~ A + B + C + D,
+    at = fixed_vars,
+    xlab = var_x,
+    ylab = var_y,
+    main = paste("Superfície de Resposta para", response),
+    col = terrain.colors(10)
+  )
+}
+
+# Contornos para y1
+gerar_superficie(m_y1, "A", "B", list(C = 0, D = 0), "Energy (kWh)")
+
+# Contornos para y3
+gerar_superficie(m_y3, "A", "B", list(C = 0, D = 0), "LCOE (¢/kWh)")
+
+# Superfície 3D
+persp(m_y1, ~ A + B + C + D, 
+      zlim = c(min(dados$y1), max(dados$y1)),
+      theta = 30, phi = 20, 
+      col = viridis::viridis(40), 
+      contours = "bottom")
+```
+
+## Gráficos Plotly para Análise de Resposta
+
+Faremos uma análise utilizando o gráfico `plotly` para evidenciar interações entre fatores para as respostas da Produção de Energia e Custo Nivelado de Eletricidade (LCOE). A exibição dos gráficos vão de acordo com o estudo.
+
+### Produção de Energia
+
+```{r, out.width='100%', fig.height=1, echo=FALSE, message=FALSE, warning=FALSE}
+# graficos plotly
+
+#-----------------------------------------------------------------------
+# Ajuste do Modelo para y1 (Energy) com Curvatura
+m_y1_curvature <- rsm::rsm(y1 ~ SO(A, C, D), data = dados_coded)
+
+#-----------------------------------------------------------------------
+# Grid para Predição - A e C
+grid_pred_AC <- expand.grid(
+  A = seq(-1, 1, length.out = 30),
+  C = seq(-1, 1, length.out = 30),
+  B = 0,  # Fixando B em 0
+  D = 0   # Fixando D em 0 para análise de A e C
+)
+
+# Adicionando Predições para A e C
+grid_pred_AC <- grid_pred_AC %>%
+  mutate(
+    fit = predict(m_y1_curvature, newdata = grid_pred_AC)
+  )
+
+# Convertendo para Forma de Array - A e C
+array_pred_AC <- list(
+  A = unique(grid_pred_AC$A),
+  C = unique(grid_pred_AC$C),
+  fit = matrix(grid_pred_AC$fit, nrow = length(unique(grid_pred_AC$A)))
+)
+
+#-----------------------------------------------------------------------
+# Grid para Predição - A e D
+grid_pred_AD <- expand.grid(
+  A = seq(-1, 1, length.out = 30),
+  D = seq(-1, 1, length.out = 30),
+  B = 0,  # Fixando B em 0
+  C = 0   # Fixando C em 0 para análise de A e D
+)
+
+# Adicionando Predições para A e D
+grid_pred_AD <- grid_pred_AD %>%
+  mutate(
+    fit = predict(m_y1_curvature, newdata = grid_pred_AD)
+  )
+
+# Convertendo para Forma de Array - A e D
+array_pred_AD <- list(
+  A = unique(grid_pred_AD$A),
+  D = unique(grid_pred_AD$D),
+  fit = matrix(grid_pred_AD$fit, nrow = length(unique(grid_pred_AD$A)))
+)
+
+#-----------------------------------------------------------------------
+# Gráfico 3D Interativo com Plotly
+
+library(plotly)
+
+# Gráfico Interativo para A e C
+plot_AC <- plot_ly(
+  x = array_pred_AC$A,
+  y = array_pred_AC$C,
+  z = array_pred_AC$fit
+) %>%
+  add_surface(
+    colors = viridis::turbo(30),
+    contours = list(
+      z = list(
+        show = TRUE,
+        usecolormap = TRUE,
+        highlightcolor = "#ff0000",
+        project = list(z = TRUE)
+      )
+    )
+  ) %>%
+  layout(
+    title = "Interação entre A (Geração Solar) e C (Quantidade de Coletores)",
+    scene = list(
+      xaxis = list(title = "A: Geração Solar (W/m²)"),
+      yaxis = list(title = "C: Quantidade de Coletores"),
+      zaxis = list(title = "Energia (kWh)")
+    ),
+    legend = list(
+      orientation = "h",  
+      x = 0.5,            
+      y = -0.2,           
+      xanchor = "center"  
+    )
+  )
+
+# Gráfico Interativo para A e D
+plot_AD <- plot_ly(
+  x = array_pred_AD$A,
+  y = array_pred_AD$D,
+  z = array_pred_AD$fit
+) %>%
+  add_surface(
+    colors = viridis::turbo(30),
+    contours = list(
+      z = list(
+        show = TRUE,
+        usecolormap = TRUE,
+        highlightcolor = "#ff0000",
+        project = list(z = TRUE)
+      )
+    )
+  ) %>%
+  layout(
+    title = "Interação entre A (Geração Solar) e D (Capacidade de Armazenamento)",
+    scene = list(
+      xaxis = list(title = "A: Geração Solar (W/m²)"),
+      yaxis = list(title = "D: Capacidade de Armazenamento (h)"),
+      zaxis = list(title = "Energia (kWh)")
+    ),
+   showlegend = FALSE
+  )
+
+#-----------------------------------------------------------------------
+# Exibindo os Gráficos Interativos
+plot_AC
+plot_AD
+```
+
+Os gráficos exibem a interação entre A (Geração Solar) e C (Quantidade de Coletores) e
+entre A (Geração Solar) e D (Capacidade de Armazenamento).
+
+No primeiro gráfico evidencia como a combinação de diferentes níveis de geração solar e quantidade de coletores afeta a produção de energia (kWh). Observa-se uma relação crescente, onde maiores níveis de ambos os fatores aumentam a produção de energia, com uma suavidade que indica possível saturação.
+
+Na interação entre A (Geração Solar) e D (Capacidade de Armazenamento) ocorre a exploração entre os fatores, destacando o impacto simultâneo desses fatores na produção de energia. Nota-se que, com o aumento da capacidade de armazenamento, a energia também aumenta, mas de forma não linear, sugerindo um efeito de otimização.
+
+### Custo Nivelado de Eletricidade (LCOE)
+
+```{r, out.width='100%', fig.height=1, echo=FALSE, message=FALSE, warning=FALSE}
+
+#-----------------------------------------------------------------------
+# Ajuste do Modelo para y3 (LCOE)
+m_y3 <- rsm::rsm(y3 ~ SO(A, B, C, D), data = dados_coded)
+
+#-----------------------------------------------------------------------
+# Grids para Predição
+
+# Grid para A e B
+grid_pred_AB <- expand.grid(
+  A = seq(-1, 1, length.out = 50),
+  B = seq(-1, 1, length.out = 50),
+  C = 0,  # Fixando C em 0
+  D = 0   # Fixando D em 0 para análise de A e B
+) %>%
+  mutate(fit = predict(m_y3, newdata = .))
+
+# Grid para A e C
+grid_pred_AC <- expand.grid(
+  A = seq(-1, 1, length.out = 50),
+  C = seq(-1, 1, length.out = 50),
+  B = 0,  # Fixando B em 0
+  D = 0   # Fixando D em 0 para análise de A e C
+) %>%
+  mutate(fit = predict(m_y3, newdata = .))
+
+# Grid para A e D
+grid_pred_AD <- expand.grid(
+  A = seq(-1, 1, length.out = 50),
+  D = seq(-1, 1, length.out = 50),
+  B = 0,  # Fixando B em 0
+  C = 0   # Fixando C em 0 para análise de A e D
+) %>%
+  mutate(fit = predict(m_y3, newdata = .))
+
+#-----------------------------------------------------------------------
+# Convertendo Grids para Formato de Array
+
+# A e B
+array_pred_AB <- list(
+  A = unique(grid_pred_AB$A),
+  B = unique(grid_pred_AB$B),
+  fit = matrix(grid_pred_AB$fit, nrow = length(unique(grid_pred_AB$A)))
+)
+
+# A e C
+array_pred_AC <- list(
+  A = unique(grid_pred_AC$A),
+  C = unique(grid_pred_AC$C),
+  fit = matrix(grid_pred_AC$fit, nrow = length(unique(grid_pred_AC$A)))
+)
+
+# A e D
+array_pred_AD <- list(
+  A = unique(grid_pred_AD$A),
+  D = unique(grid_pred_AD$D),
+  fit = matrix(grid_pred_AD$fit, nrow = length(unique(grid_pred_AD$A)))
+)
+
+#-----------------------------------------------------------------------
+# Gráficos 3D Interativos com Plotly
+
+library(plotly)
+
+# Gráfico Interativo para A e B
+plot_AB <- plot_ly(
+  x = array_pred_AB$A,
+  y = array_pred_AB$B,
+  z = array_pred_AB$fit
+) %>%
+  add_surface(
+    colors = viridis::inferno(50),
+    contours = list(
+      z = list(
+        show = TRUE,
+        usecolormap = TRUE,
+        highlightcolor = "#ff0000",
+        project = list(z = TRUE)
+      )
+    )
+  ) %>%
+  layout(
+    title = "Interação entre A (Geração Solar) e B (Distância entre Coletores)",
+    scene = list(
+      xaxis = list(title = "A: Geração Solar (W/m²)"),
+      yaxis = list(title = "B: Distância entre Coletores (m)"),
+      zaxis = list(title = "LCOE (¢/kWh)")
+    ),
+    legend = list(
+      orientation = "h",  
+      x = 0.5,            
+      y = -0.2,           
+      xanchor = "center"  
+    )
+  )
+
+# Gráfico Interativo para A e C
+plot_AC <- plot_ly(
+  x = array_pred_AC$A,
+  y = array_pred_AC$C,
+  z = array_pred_AC$fit
+) %>%
+  add_surface(
+    colors = viridis::inferno(50),
+    contours = list(
+      z = list(
+        show = TRUE,
+        usecolormap = TRUE,
+        highlightcolor = "#ff0000",
+        project = list(z = TRUE)
+      )
+    )
+  ) %>%
+  layout(
+    title = "Interação entre A (Geração Solar) e C (Quantidade de Coletores)",
+    scene = list(
+      xaxis = list(title = "A: Geração Solar (W/m²)"),
+      yaxis = list(title = "C: Quantidade de Coletores"),
+      zaxis = list(title = "LCOE (¢/kWh)")
+    ),
+    legend = list(
+      orientation = "h",  
+      x = 0.5,            
+      y = -0.2,           
+      xanchor = "center"  
+    )
+  )
+
+# Gráfico Interativo para A e D
+plot_AD <- plot_ly(
+  x = array_pred_AD$A,
+  y = array_pred_AD$D,
+  z = array_pred_AD$fit
+) %>%
+  add_surface(
+    colors = viridis::inferno(50),
+    contours = list(
+      z = list(
+        show = TRUE,
+        usecolormap = TRUE,
+        highlightcolor = "#ff0000",
+        project = list(z = TRUE)
+      )
+    )
+  ) %>%
+  layout(
+    title = "Interação entre A (Geração Solar) e D (Capacidade de Armazenamento)",
+    scene = list(
+      xaxis = list(title = "A: Geração Solar (W/m²)"),
+      yaxis = list(title = "D: Capacidade de Armazenamento (h)"),
+      zaxis = list(title = "LCOE (¢/kWh)")
+    ),
+    legend = list(
+      orientation = "h",  
+      x = 0.5,            
+      y = -0.2,           
+      xanchor = "center"  
+    )
+  )
+
+#-----------------------------------------------------------------------
+# Exibindo os Gráficos
+
+plot_AB
+plot_AC
+plot_AD
+```
+
+Os gráficos apresentados mostram as interações entre A (Geração Solar) e B (Distância entre Coletores), A (Geração Solar) e C (Quantidade de Coletores), e A (Geração Solar) e D (Capacidade de Armazenamento) no impacto sobre o LCOE (¢/kWh).
+
+Na interação entre A (Geração Solar) e B (Distância entre Coletores), o gráfico destaca como a combinação de níveis de geração solar e distância entre coletores influencia o custo nivelado de eletricidade (LCOE). Observa-se que o LCOE diminui consideravelmente com maiores níveis de geração solar, enquanto a distância entre coletores apresenta um efeito secundário, sugerindo que ajustes neste fator podem otimizar o LCOE dentro de uma faixa específica.
+
+Na interação entre A (Geração Solar) e C (Quantidade de Coletores), o gráfico evidencia uma redução do LCOE com o aumento da geração solar. A quantidade de coletores, no entanto, apresenta um efeito mais moderado, indicando que o aumento excessivo deste fator pode ter impacto limitado na redução adicional do LCOE. Assim, é possível identificar uma combinação ideal entre os dois fatores para minimizar os custos.
+
+A interação entre geração solar e capacidade de armazenamento mostra uma relação mais complexa. O aumento da capacidade de armazenamento, combinado com altos níveis de geração solar, reduz o LCOE de forma significativa. Porém, nota-se uma não linearidade, onde a otimização ocorre em níveis intermediários da capacidade de armazenamento.
+
+Essas interações demonstram que o LCOE é sensível tanto à geração solar quanto aos fatores complementares (distância entre coletores, quantidade de coletores e capacidade de armazenamento). Ajustes estratégicos nesses fatores podem reduzir custos de maneira significativa, com efeitos variando entre relações lineares e não lineares. A análise contribui para decisões mais informadas no design e operação de sistemas de energia solar.
+

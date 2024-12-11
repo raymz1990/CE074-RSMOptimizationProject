@@ -1,0 +1,12 @@
+# Conclusão
+
+O presente estudo utilizou a Metodologia de Superfície de Resposta (RSM) para explorar e otimizar o desempenho de um sistema híbrido de energia solar concentrada. Os resultados obtidos permitiram identificar os fatores mais relevantes que impactam a produção de energia e o custo nivelado de eletricidade (LCOE), contribuindo para o avanço do design e operação desse tipo de sistema.
+
+Os modelos ajustados e as superfícies de resposta demonstraram que o desempenho do sistema híbrido é resultado de interações complexas entre os fatores experimentais.
+
+Foi possível identificar pontos ótimos para maximizar a produção de energia e minimizar os custos, fornecendo insights valiosos para projetos futuros.
+
+Este estudo destaca a relevância da aplicação de metodologias estatísticas avançadas, como a RSM, no desenvolvimento de soluções inovadoras para sistemas de energia renovável. Ao identificar os fatores críticos e propor estratégias de otimização, contribui-se para o avanço da eficiência energética e sustentabilidade, alinhando-se às demandas globais por soluções de baixo impacto ambiental. Assim, as conclusões obtidas não apenas fortalecem o embasamento teórico, mas também fornecem suporte prático para o crescimento do setor de energias renováveis.
+
+Os resultados do presente estudo estão amplamente alinhados com as conclusões do artigo original. Ambos destacam a importância de otimizar os fatores principais ($A$, $B$, $C$ e $D$) e suas interações, especialmente $A^2$, $D^2$, $A:C$ e $A:D$, para melhorar a eficiência energética e reduzir custos. No entanto, as diferenças nas análises realizadas indicam oportunidades de aprofundamento, como explorar a redução da área da usina e diferentes métodos de resfriamento, contribuindo para uma visão ainda mais abrangente sobre o desempenho de sistemas *CSP*.
+

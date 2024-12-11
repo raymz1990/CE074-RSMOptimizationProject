@@ -1,0 +1,28 @@
+# Motivação e Problema Prático
+
+A crescente demanda global por fontes de energia sustentável e limpa tem impulsionado a busca por tecnologias inovadoras e eficientes. Entre essas tecnologias, a energia solar concentrada (CSP - Concentrated Solar Power) emerge como uma solução promissora para a geração de eletricidade em larga escala. Diferente de outras fontes renováveis, a CSP oferece vantagens significativas, como a capacidade de armazenamento térmico, permitindo a geração de energia de forma contínua, mesmo durante períodos de baixa irradiação solar.
+
+No entanto, a implantação de plantas CSP enfrenta desafios técnicos, econômicos e ambientais que limitam sua competitividade em relação a outras tecnologias, como os sistemas fotovoltaicos (PV). Entre esses desafios, destacam-se:
+
+1. **Altos custos iniciais**: O investimento de capital necessário para a construção de uma planta CSP é substancialmente maior quando comparado aos sistemas PV.
+2. **Eficiência energética**: O desempenho das plantas CSP é altamente dependente de condições climáticas, design do sistema e configuração operacional.
+3. **Consumo de recursos naturais**: O consumo elevado de água para sistemas de resfriamento evaporativo é uma questão crítica, especialmente em regiões desérticas onde a água é escassa.
+4. **Otimização do design**: A escolha dos parâmetros de projeto, como múltiplo solar, espaçamento entre fileiras, número de coletores por loop e tamanho do armazenamento térmico, afeta diretamente a eficiência, custo e sustentabilidade das plantas CSP.
+
+Diante desses desafios, o problema prático abordado neste estudo é como projetar e otimizar plantas CSP para maximizar a eficiência energética e econômica, ao mesmo tempo em que minimiza o impacto ambiental e o consumo de recursos. O objetivo é fornecer um guia baseado em evidências para a tomada de decisões, utilizando a Metodologia de Superfície de Resposta (RSM) como ferramenta de modelagem e otimização.
+
+A RSM é particularmente adequada para este contexto, pois permite explorar de forma eficiente a interação entre múltiplos fatores de projeto, identificando configurações que maximizam a produção de energia (kWh) e minimizam o custo nivelado de eletricidade (LCOE) e o consumo de água. Por meio de um delineamento experimental bem estruturado e análises estatísticas rigorosas, é possível desenvolver modelos preditivos que orientam o design e a operação de plantas CSP, contribuindo para sua viabilidade comercial e sustentabilidade.
+
+Para ilustrar o fluxo de funcionamento das plantas CSP, a Figura 1 apresenta o esquema de um sistema de energia solar concentrada, detalhando os principais componentes e o caminho seguido pela energia térmica desde a coleta solar até a geração elétrica.
+
+```{r echo=FALSE,comment=FALSE,message=FALSE,warning=FALSE,fig.align='left'}
+#| label: fig-1
+#| echo: false
+#| fig-cap: |
+#|   Diagrama do CSP, com três técnicas diferentes de resfriamento configuradas.
+#| out.width: '100%'
+
+knitr::include_graphics("../images/fig1.png")
+```
+
+
