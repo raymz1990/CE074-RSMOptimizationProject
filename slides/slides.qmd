@@ -1,0 +1,678 @@
+---
+title: "CE074 - Controle de Processos Industriais" 
+subtitle: "Modelagem e Otimização de Energia Solar Concentrada usando Metodologia de Superfície de Resposta"
+author: ["Miqueias Teixeira da Silva", "Raymundo Eduardo Pilz"]
+# date: "Dezembro 2024"
+format:
+  revealjs: 
+    slide-number: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    css: styles.css
+    footer: 'Estatística e Ciência de Dados - UFPR'
+    incremental: true
+    transition: slide
+---
+
+```{r setup, include=FALSE}
+# Carregando bibliotecas
+library(tidyverse)
+library(rsm)
+library(ggplot2)
+library(scales)
+library(plotly)
+```
+
+## Introdução
+
+Esta apresentação irá explorar uma análise de um artigo publicado pela **ELSEVIER**, em Novembro de 2024, intitulada de [Modelling and optimization of concentrated solar power using response surface methodology: A comparative study of air, water, and hybrid cooling techniques](https://doi.org/10.1016/j.enconman.2024.118915), compreendendo:
+
+-   Motivação e Problema Prático
+-   Metodologia
+-   Análise e Resultados
+
+
+## Fluxo do estudo
+
+![](img/fig1.png){.absolute top="80" center="0" width="80%" height="600"}
+
+## Motivação 
+
+- Altos custos iniciais
+- Eficiência energética
+- Consumo de recursos naturais
+
+## Metodologia
+
+Fatores estudados
+
+| Parametro                                     | Level Baixo | Level Alto |
+|:----------------------------------------------|:------------|:-----------|
+| A: Solar multiple                             | 1           | 5          |
+| B: Row spacing (m)                            | 10          | 30         |
+| C: No. of solar collector assemblies per loop | 4           | 10         |
+| D: Thermal energy storage size (h)            | 5           | 15         |
+
+
+## Metodologia
+
+**Respostas**
+
+1. Produção de Energia (Energy, kWh)
+2. Custo Nivelado de Eletricidade (LCOE, ¢/kWh)
+3. Consumo de Água (Water consumption, m³)
+4. Fator de Capacidade (Capacity factor, %)
+5. Área Ocupada (Area, acres)
+
+## Metodologia
+
+**Modelo**
+$$
+Y = \beta_0 + \sum^N_{i=1} \beta_i X_i + \sum^N_{i=1} \beta_{ii} X_i^2 + \sum^{N-1}_{i=1} \sum^N_{j>1} \beta_{ij} X_i X_j + \epsilon
+$$
+
+## Metodologia
+
+**Modelo Completo**
+
+| Run	| A	| B	| C	| D	| Energia (kWh)	|  Fator de Capacidade (%) |  LCOE (¢/kWh) | Consumo de Água (m³)	| Área (Acres)	|
+|:-:|:-:|:---:|:-:|:-:|:---------:|:-----:|:------:|:------:|:---:|
+| 1	| 1	| 10	| 4	| 5	| 80901840	|  18,5 |  28,02 | 170883	| 183	| 
+| 2	| 5	| 10	| 4	| 5	| 213502480	|  48,7 |  24,81 | 457032	| 907	| 
+| 3	| 1	| 30	| 4	| 5	| 86828856	|  19,8 |  27,01 | 182988	| 548	| 
+| 4	| 5	| 30	| 4	| 5	| 212109744	|  48,4 |  25,24 | 470202	| 2721	| 
+| 5	| 1	| 10	| 10	| 5	| 72318936	|  16,5 |  29,98 | 163059	| 185	|
+
+## Diagrama do CSP do estudo realizado
+
+![](img/fig2.png){.absolute top="80" center="0" width="80%" height="500"}
+
+## Carregamento dos dados {.smaller .scrollable transition="slide"}
+
+::: panel-tabset
+
+### Código
+
+```{r echo =TRUE}
+dados <- tibble::tribble(
+  ~run, ~solar, ~spacing, ~assemblies, ~storage, ~y1, ~y2, ~y3, ~y4, ~y5,
+  1, 1, 10, 4, 5, 80901840, 18.5, 28.02, 170883, 183,
+  2, 5, 10, 4, 5, 213502480, 48.7, 24.81, 457032, 907,
+  3, 1, 30, 4, 5, 86828856, 19.8, 27.01, 182988, 548,
+  4, 5, 30, 4, 5, 212109744, 48.4, 25.24, 470202, 2721,
+  5, 1, 10, 10, 5, 72318936, 16.5, 29.98, 163059, 185,
+  6, 5, 10, 10, 5, 216170432, 49.4, 24.71, 457562, 908,
+  7, 1, 30, 10, 5, 79653408, 18.2, 28.37, 177969, 554,
+  8, 5, 30, 10, 5, 228318656, 52.1, 24.14, 481062, 2724,
+  9, 1, 10, 4, 15, 77971872, 17.8, 36.76, 170378, 183,
+  10, 5, 10, 4, 15, 333468288, 76.1, 20.4, 656915, 907,
+  11, 1, 30, 4, 15, 83925288, 19.2, 35.14, 182493, 548,
+  12, 5, 30, 4, 15, 319167552, 72.9, 21.22, 644373, 2721,
+  13, 1, 10, 10, 15, 69414704, 15.8, 40.81, 162994, 185,
+  14, 5, 10, 10, 15, 339091392, 77.4, 20.14, 681640, 908,
+  15, 1, 30, 10, 15, 76591784, 17.5, 37.3, 177942, 554,
+  16, 5, 30, 10, 15, 344158976, 78.6, 20.19, 691931, 2724,
+  17, 1, 20, 7, 10, 87385928, 20, 30.46, 187418, 366,
+  18, 5, 20, 7, 10, 303626368, 69.3, 20.78, 610245, 1817,
+  19, 3, 10, 7, 10, 244371072, 55.8, 20.25, 478649, 546,
+  20, 3, 30, 7, 10, 259963408, 59.4, 19.65, 507318, 1637,
+  21, 3, 20, 4, 10, 256355984, 58.5, 19.78, 497265, 1091,
+  22, 3, 20, 10, 10, 248066240, 56.6, 20.14, 495255, 1098,
+  23, 3, 20, 7, 5, 214178496, 48.9, 20.84, 423034, 1091,
+  24, 3, 20, 7, 15, 276967136, 63.2, 20, 535398, 1091,
+  25, 3, 20, 7, 10, 261283136, 59.7, 19.53, 507792, 1091,
+  26, 3, 20, 7, 10, 261283136, 59.7, 19.53, 507792, 1091,
+  27, 3, 20, 7, 10, 261283136, 59.7, 19.53, 507792, 1091,
+  28, 3, 20, 7, 10, 261283136, 59.7, 19.53, 507792, 1091,
+  29, 3, 20, 7, 10, 261283136, 59.7, 19.53, 507792, 1091,
+  30, 3, 20, 7, 10, 261283136, 59.7, 19.53, 507792, 1091)
+```
+
+### Resultado
+
+```{r}
+knitr::kable(dados)
+```
+
+### xtbas
+
+```{r}
+#| echo: true
+#| fig-width: 10
+#| fig-height: 4.5
+
+# Verificando as combinações de fatores
+xtabs(~solar + spacing + assemblies + storage, data = dados)
+```
+
+:::
+
+
+## Efeitos Principais para as Respostas {.smaller .scrollable transition="slide"}
+
+::: panel-tabset
+
+### Código
+
+```{r echo =TRUE}
+## Transformação e Preparação dos Dados para Gráficos
+plot_dados <- dados %>%
+  pivot_longer(
+    cols = starts_with("y"),
+    names_to = "y",
+    values_to = "valor_y"
+  ) %>%
+  pivot_longer(
+    cols = c(solar, spacing, assemblies, storage),
+    names_to = "variavel",
+    values_to = "valor_variavel"
+  ) %>%
+  mutate(
+    variavel = case_when(
+      variavel == "solar" ~ "A: Geração Solar (W/m²)",
+      variavel == "spacing" ~ "B: Distância entre Coletores (m)",
+      variavel == "assemblies" ~ "C: Quantidade de Coletores",
+      variavel == "storage" ~ "D: Capacidade de Armazenamento (h)",
+      TRUE ~ variavel
+    )
+  ) %>%
+  group_by(variavel, valor_variavel, y) %>%
+  summarise(media_y = mean(valor_y, na.rm = TRUE), .groups = "drop")
+
+## Função para Gerar Gráficos
+gerar_grafico <- function(data, resposta, cor, eixo_y) {
+  ggplot(data %>% filter(y == resposta),
+         aes(y = media_y, x = valor_variavel)) +
+    geom_point(size = 3, color = cor) +
+    # geom_line(aes(group = 1), color = cor) +
+    geom_smooth(method = "lm", formula = y ~ poly(x, 2), se = FALSE, color = cor) +
+    facet_wrap(~variavel, scales = "free_x", ncol = 2) +
+    labs(
+      title = "Efeitos Principais para as Respostas",
+      subtitle = paste("Médias das Variáveis para", eixo_y),
+      x = "",
+      y = eixo_y
+    ) +
+    scale_y_continuous(labels = label_number(scale_cut = cut_short_scale())) +
+    theme_classic()
+}
+```
+
+### Energia (kWh)
+
+```{r}
+grafico_y1 <- gerar_grafico(plot_dados, "y1", "#FF2400", "Energia (kWh)")
+print(grafico_y1)
+```
+
+### Fator Capacidade (%)
+
+```{r}
+grafico_y2 <- gerar_grafico(plot_dados, "y2", "#4169E1", "Fator Capacidade (%)")
+print(grafico_y2)
+```
+
+###  LCOE (¢/kWh)
+
+```{r}
+grafico_y3 <- gerar_grafico(plot_dados, "y3", "#32CD32", "LCOE (¢/kWh)")
+print(grafico_y3)
+```
+
+### Consumo de Água (m³)
+
+```{r}
+grafico_y4 <- gerar_grafico(plot_dados, "y4", "#FFD700", "Consumo de Água (m³)")
+print(grafico_y4)
+
+```
+
+### Área (Acres)
+
+```{r}
+grafico_y5 <- gerar_grafico(plot_dados, "y5", "#8A2BE2", "Área (Acres)")
+print(grafico_y5)
+```
+
+:::
+
+## Codificação de fatores {.smaller .scrollable transition="slide"}
+
+::: panel-tabset
+
+### Código
+
+```{r echo =TRUE}
+# Codificação dos Fatores
+dados_coded <- rsm::coded.data(
+  dados,
+  A ~ (solar - 3) / 2,
+  B ~ (spacing - 20) / 10,
+  C ~ (assemblies - 7) / 3,
+  D ~ (storage - 10) / 5
+)
+```
+
+### Resultado
+
+```{r}
+print(dados_coded, decode = FALSE)
+```
+
+
+:::
+
+
+## Modelo para Produção de Energia {.smaller .scrollable transition="slide"}
+
+::: panel-tabset
+
+### Código
+
+```{r echo =TRUE}
+m_y1 <- rsm::rsm(y1 ~ SO(A, B, C, D), data = dados_coded)
+```
+
+### Resultado
+
+```{r}
+summary(m_y1)
+```
+
+### Anova
+```{r}
+anova(m_y1)
+```
+
+### Gráfico
+```{r}
+# Gráfico de Pareto para y1 e y3
+gerar_pareto <- function(model, response) {
+  t_critico <- qt(0.025, df.residual(model), lower.tail = FALSE)
+  MSE <- deviance(model) / df.residual(model)
+  SE_coef <- sqrt(MSE / nrow(model$model))
+  t0 <- coef(model) / SE_coef
+  t0 <- data.frame(Termos = names(t0)[-1], Efeito = abs(t0[-1]))
+  
+  ggplot(t0, aes(x = reorder(Termos, Efeito), y = Efeito)) +
+    geom_bar(stat = "identity", fill = "lightgreen", color = "darkgreen") +
+    geom_hline(yintercept = t_critico, linetype = "dashed", color = "red") +
+    coord_flip() +
+    labs(
+      title = paste("Gráfico de Pareto dos Efeitos"),
+      subtitle = paste("Resposta:", response),
+      x = "Termos",
+      y = "Efeitos Padronizados"
+    ) +
+    theme_classic()
+}
+
+pareto_y1 <- gerar_pareto(m_y1, "Energy (kWh)")
+print(pareto_y1)
+```
+
+:::
+
+## Modelo para Custo Nivelado de Eletricidade (LCOE) {.smaller .scrollable transition="slide"}
+
+::: panel-tabset
+
+### Código
+
+```{r echo =TRUE}
+m_y3 <- rsm::rsm(y3 ~ SO(A, B, C, D), data = dados_coded)
+```
+
+### Resultado
+
+```{r}
+summary(m_y3)
+```
+
+### Anova
+```{r}
+anova(m_y3)
+```
+
+### Gráfico
+```{r}
+pareto_y3 <- gerar_pareto(m_y3, "LCOE (¢/kWh)")
+print(pareto_y3)
+```
+
+:::
+
+
+## Superfícies de Resposta da $y1$ {.smaller .scrollable transition="slide"}
+
+::: panel-tabset
+
+### Código
+
+```{r echo =TRUE}
+# Ajuste do Modelo para y1 (Energy) com Curvatura
+m_y1_curvature <- rsm::rsm(y1 ~ SO(A, C, D), data = dados_coded)
+
+#-----------------------------------------------------------------------
+# Grid para Predição - A e C
+grid_pred_AC <- expand.grid(
+  A = seq(-1, 1, length.out = 30),
+  C = seq(-1, 1, length.out = 30),
+  B = 0,  # Fixando B em 0
+  D = 0   # Fixando D em 0 para análise de A e C
+)
+
+# Adicionando Predições para A e C
+grid_pred_AC <- grid_pred_AC %>%
+  mutate(
+    fit = predict(m_y1_curvature, newdata = grid_pred_AC)
+  )
+
+# Convertendo para Forma de Array - A e C
+array_pred_AC <- list(
+  A = unique(grid_pred_AC$A),
+  C = unique(grid_pred_AC$C),
+  fit = matrix(grid_pred_AC$fit, nrow = length(unique(grid_pred_AC$A)))
+)
+
+#-----------------------------------------------------------------------
+# Grid para Predição - A e D
+grid_pred_AD <- expand.grid(
+  A = seq(-1, 1, length.out = 30),
+  D = seq(-1, 1, length.out = 30),
+  B = 0,  # Fixando B em 0
+  C = 0   # Fixando C em 0 para análise de A e D
+)
+
+# Adicionando Predições para A e D
+grid_pred_AD <- grid_pred_AD %>%
+  mutate(
+    fit = predict(m_y1_curvature, newdata = grid_pred_AD)
+  )
+
+# Convertendo para Forma de Array - A e D
+array_pred_AD <- list(
+  A = unique(grid_pred_AD$A),
+  D = unique(grid_pred_AD$D),
+  fit = matrix(grid_pred_AD$fit, nrow = length(unique(grid_pred_AD$A)))
+)
+
+#-----------------------------------------------------------------------
+# Gráfico 3D Interativo com Plotly
+
+library(plotly)
+
+# Gráfico Interativo para A e C
+plot_AC <- plot_ly(
+  x = array_pred_AC$A,
+  y = array_pred_AC$C,
+  z = array_pred_AC$fit
+) %>%
+  add_surface(
+    colors = viridis::turbo(30),
+    contours = list(
+      z = list(
+        show = TRUE,
+        usecolormap = TRUE,
+        highlightcolor = "#ff0000",
+        project = list(z = TRUE)
+      )
+    )
+  ) %>%
+  layout(
+    #title = "Interação entre A (Geração Solar) e C (Quantidade de Coletores)",
+    scene = list(
+      xaxis = list(title = "A: Geração Solar (W/m²)"),
+      yaxis = list(title = "C: Quantidade de Coletores"),
+      zaxis = list(title = "Energia (kWh)")
+    ),
+   showlegend = FALSE
+  )
+
+# Gráfico Interativo para A e D
+plot_AD <- plot_ly(
+  x = array_pred_AD$A,
+  y = array_pred_AD$D,
+  z = array_pred_AD$fit
+) %>%
+  add_surface(
+    colors = viridis::turbo(30),
+    contours = list(
+      z = list(
+        show = TRUE,
+        usecolormap = TRUE,
+        highlightcolor = "#ff0000",
+        project = list(z = TRUE)
+      )
+    )
+  ) %>%
+  layout(
+    #title = "Interação entre A (Geração Solar) e D (Capacidade de Armazenamento)",
+    scene = list(
+      xaxis = list(title = "A: Geração Solar (W/m²)"),
+      yaxis = list(title = "D: Capacidade de Armazenamento (h)"),
+      zaxis = list(title = "Energia (kWh)")
+    ),
+   showlegend = FALSE
+  )
+```
+
+### Interação $A:C$
+
+```{r}
+#| fig-width: 10
+#| fig-height: 4
+
+plot_AC
+```
+
+### Interação $A:D$
+```{r}
+#| fig-width: 10
+#| fig-height: 4
+
+plot_AD
+```
+
+:::
+
+
+## Superfícies de Resposta da $y3$ {.smaller .scrollable transition="slide"}
+
+::: panel-tabset
+
+### Código
+
+```{r echo =TRUE}
+# Ajuste do Modelo para y3 (LCOE)
+m_y3 <- rsm::rsm(y3 ~ SO(A, B, C, D), data = dados_coded)
+
+#-----------------------------------------------------------------------
+# Grids para Predição
+
+# Grid para A e B
+grid_pred_AB <- expand.grid(
+  A = seq(-1, 1, length.out = 50),
+  B = seq(-1, 1, length.out = 50),
+  C = 0,  # Fixando C em 0
+  D = 0   # Fixando D em 0 para análise de A e B
+) %>%
+  mutate(fit = predict(m_y3, newdata = .))
+
+# Grid para A e C
+grid_pred_AC <- expand.grid(
+  A = seq(-1, 1, length.out = 50),
+  C = seq(-1, 1, length.out = 50),
+  B = 0,  # Fixando B em 0
+  D = 0   # Fixando D em 0 para análise de A e C
+) %>%
+  mutate(fit = predict(m_y3, newdata = .))
+
+# Grid para A e D
+grid_pred_AD <- expand.grid(
+  A = seq(-1, 1, length.out = 50),
+  D = seq(-1, 1, length.out = 50),
+  B = 0,  # Fixando B em 0
+  C = 0   # Fixando C em 0 para análise de A e D
+) %>%
+  mutate(fit = predict(m_y3, newdata = .))
+
+#-----------------------------------------------------------------------
+# Convertendo Grids para Formato de Array
+
+# A e B
+array_pred_AB <- list(
+  A = unique(grid_pred_AB$A),
+  B = unique(grid_pred_AB$B),
+  fit = matrix(grid_pred_AB$fit, nrow = length(unique(grid_pred_AB$A)))
+)
+
+# A e C
+array_pred_AC <- list(
+  A = unique(grid_pred_AC$A),
+  C = unique(grid_pred_AC$C),
+  fit = matrix(grid_pred_AC$fit, nrow = length(unique(grid_pred_AC$A)))
+)
+
+# A e D
+array_pred_AD <- list(
+  A = unique(grid_pred_AD$A),
+  D = unique(grid_pred_AD$D),
+  fit = matrix(grid_pred_AD$fit, nrow = length(unique(grid_pred_AD$A)))
+)
+
+#-----------------------------------------------------------------------
+# Gráficos 3D Interativos com Plotly
+
+library(plotly)
+
+# Gráfico Interativo para A e B
+plot_AB <- plot_ly(
+  x = array_pred_AB$A,
+  y = array_pred_AB$B,
+  z = array_pred_AB$fit
+) %>%
+  add_surface(
+    colors = viridis::inferno(50),
+    contours = list(
+      z = list(
+        show = TRUE,
+        usecolormap = TRUE,
+        highlightcolor = "#ff0000",
+        project = list(z = TRUE)
+      )
+    )
+  ) %>%
+  layout(
+    # title = "Interação entre A (Geração Solar) e B (Distância entre Coletores)",
+    scene = list(
+      xaxis = list(title = "A: Geração Solar (W/m²)"),
+      yaxis = list(title = "B: Distância entre Coletores (m)"),
+      zaxis = list(title = "LCOE (¢/kWh)")
+    ),
+    showlegend = FALSE
+  )
+
+# Gráfico Interativo para A e C
+plot_AC <- plot_ly(
+  x = array_pred_AC$A,
+  y = array_pred_AC$C,
+  z = array_pred_AC$fit
+) %>%
+  add_surface(
+    colors = viridis::inferno(50),
+    contours = list(
+      z = list(
+        show = TRUE,
+        usecolormap = TRUE,
+        highlightcolor = "#ff0000",
+        project = list(z = TRUE)
+      )
+    )
+  ) %>%
+  layout(
+    # title = "Interação entre A (Geração Solar) e C (Quantidade de Coletores)",
+    scene = list(
+      xaxis = list(title = "A: Geração Solar (W/m²)"),
+      yaxis = list(title = "C: Quantidade de Coletores"),
+      zaxis = list(title = "LCOE (¢/kWh)")
+    ),
+    showlegend = FALSE
+  )
+
+# Gráfico Interativo para A e D
+plot_AD <- plot_ly(
+  x = array_pred_AD$A,
+  y = array_pred_AD$D,
+  z = array_pred_AD$fit
+) %>%
+  add_surface(
+    colors = viridis::inferno(50),
+    contours = list(
+      z = list(
+        show = TRUE,
+        usecolormap = TRUE,
+        highlightcolor = "#ff0000",
+        project = list(z = TRUE)
+      )
+    )
+  ) %>%
+  layout(
+    # title = "Interação entre A (Geração Solar) e D (Capacidade de Armazenamento)",
+    scene = list(
+      xaxis = list(title = "A: Geração Solar (W/m²)"),
+      yaxis = list(title = "D: Capacidade de Armazenamento (h)"),
+      zaxis = list(title = "LCOE (¢/kWh)")
+    ),
+    showlegend = FALSE
+  )
+```
+
+### Interação $A:B$
+
+```{r}
+#| fig-width: 10
+#| fig-height: 4
+
+plot_AB
+```
+
+### Interação $A:C$
+
+```{r}
+#| fig-width: 10
+#| fig-height: 4
+
+plot_AC
+```
+
+### Interação $A:D$
+```{r}
+#| fig-width: 10
+#| fig-height: 4
+
+plot_AD
+```
+
+:::
+
+## Conclusão {auto-animate="true"}
+
+- Insights significativos.
+  
+- **Comparações com o estudo original**:
+  - Resultados semelhantes foram observados em termos de impacto dos parâmetros:
+    - Interação $A:D$ como os fatores mais influentes na produção de energia.
+    - Fator $A$ e interações $A:D$ com maior influência no LCOE.
+    
+    
+## {}
+
+### Obrigado!
+
+
+
+
+
+

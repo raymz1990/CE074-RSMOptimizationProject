@@ -1,0 +1,15 @@
+
+
+.border {
+  border: 1px solid #dee2e6;
+}
+
+.border-thick {
+  border-width: 2px;
+}
+
+.reveal footer {
+  text-align: left;
+  padding-left: 10px; /* Ajusta o espaço à esquerda */
+  font-size: 0.9em;   /* Ajusta o tamanho da fonte */
+}

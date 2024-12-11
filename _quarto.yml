@@ -38,12 +38,11 @@ book:
   
   chapters:
   - index.qmd
-  
-  - part: Getting started
-    chapters: 
-    - content/chapter_I/setup.qmd
 
-  - content/references.qmd
+  - content/1.motivation.qmd
+  - content/2.methodology.qmd
+  - content/3.analysis.qmd
+  - content/4.conclusion.qmd
   
   # appendices:
   #   - content/appendices.Rmd
@@ -58,7 +57,7 @@ format:
     toc-depth: 3
     toc-title: "Nesta página"
     code-link: true
-    code-fold: false
+    code-fold: true
     highlight-style: printing
     code-block-bg: true
     code-overflow: wrap

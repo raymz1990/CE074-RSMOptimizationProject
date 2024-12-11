@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 tidyverse
 ggplot2
 tibble
@@ -12,3 +13,19 @@ deSolve
 rsm
 scales
 plotly
+=======
+tidyverse
+ggplot2
+tibble
+tidyr
+readr
+purrr
+dplyr
+stringr
+forcats
+lubridate
+deSolve
+rsm
+scales
+plotly
+>>>>>>> eb99e1b (#update-2024.12.10_versao-final-pt3)
