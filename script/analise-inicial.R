@@ -2,6 +2,7 @@
 # Controle de Processos Industriais
 # Metodologia de Superfície de Resposta 
 #-----------------------------------------------------------------------
+rm(list=ls())
 
 # artigo: 
 browseURL("https://doi.org/10.1016/j.enconman.2024.118915")
@@ -88,8 +89,7 @@ plot_dados <- dados %>%
       variavel == "assemblies" ~ "C: Quantidade de Coletores",
       variavel == "storage" ~ "D: Capacidade de Armazenamento (h)",
       TRUE ~ variavel
-    ),
-    valor_variavel = factor(valor_variavel)
+    )
   ) %>%
   group_by(variavel, valor_variavel, y) %>%
   summarise(media_y = mean(valor_y, na.rm = TRUE), .groups = "drop")
@@ -99,15 +99,17 @@ gerar_grafico <- function(data, resposta, cor, eixo_y) {
   ggplot(data %>% filter(y == resposta),
          aes(y = media_y, x = valor_variavel)) +
     geom_point(size = 3, color = cor) +
-    geom_line(aes(group = 1), color = cor) +
-    facet_wrap(~variavel, scales = "free_x", ncol = 4) +
+    # geom_line(aes(group = 1), color = cor) +
+    geom_smooth(method = "lm", formula = y ~ poly(x, 2), se = FALSE, color = cor) +
+    facet_wrap(~variavel, scales = "free_x", ncol = 2) +
     labs(
       title = "Efeitos Principais para as Respostas",
-      subtitle = "Médias das Variáveis",
+      subtitle = paste("Médias das Variáveis para", eixo_y),
       x = "",
       y = eixo_y
     ) +
-    scale_y_continuous(labels = label_number(scale_cut = cut_short_scale()))
+    scale_y_continuous(labels = label_number(scale_cut = cut_short_scale())) +
+    theme_classic()
 }
 
 ## Gráficos para Cada Resposta
@@ -142,118 +144,434 @@ print(dados_coded, decode = TRUE)
 print(dados_coded, decode = FALSE)
 
 
-# y3
-m1 <- rsm::rsm(y3 ~ SO(A, B, C, D), data = dados_coded)
-coef(m1)
+#-----------------------------------------------------------------------
+# Ajuste do Modelo para y1 (Energy)
+m_y1 <- rsm::rsm(y1 ~ SO(A, B, C, D), data = dados_coded)
+summary(m_y1)
 
-summary(m1)
-
-anova1 <- aov(m1)
-summary(anova1)
-
-# grafico de pareto dos efeitos padronizados
-t_critico <- qt(0.025, df.residual(m1), lower.tail = FALSE)
-
-MSE <- deviance(m1)/df.residual(m1)
-SE_coef <- sqrt(MSE/30)
-t0 <- m1$coefficients/SE_coef
-
-t_0 <- data.frame(names(coef(m1)), abs(t0))
-colnames(t_0) <- c("termo", "t0")
-
-# grafico
-pPar <- ggbarplot(data = t_0[-1,],
-                  x = "termo", y = "t0",
-                  col = "green4",
-                  fill = "lightgreen",
-                  rotate = TRUE,
-                  sort.val = "asc") +
-  theme_classic() +
-  geom_hline(yintercept = t_critico, col = "darkred") + 
-  labs(
-    title = "Gráfico de Pareto dos Efeitos",
-    subtitle = "Resposta: LCOE (¢/kWh)",
-    x = "Termo",
-    y = "Efeito"
-  )
-
-pPar
-
-# Superfícies para pares de variáveis fixando as demais em 0.
-par(mfrow = c(2, 2))
-contour(m1, ~ A + B + C + D,
-        at = list(A = 0, B = 0, C = 0, D = 0),
-        col = rainbow(20))
-graphics::layout(1)
-
-par(mfrow = c(2, 2))
-contour(m1, ~ A + B + C + D,
-        at = list(A = 0, B = 0, C = 0, D = 0),
-        image = TRUE)
-graphics::layout(1)
-
-par(mfrow = c(2, 2))
-# range(dados_pred$fit)
-persp(m1, ~ A + B + C + D,
-      zlim = c(20, 50),
-      at = list(A = 0, B = 0, C = 0, D = 0),
-      col = viridis::viridis(40),
-      contours = "bottom",
-      theta = 45,
-      phi = 30)
-graphics::layout(1)
+# ANOVA do modelo y1
+anova_y1 <- anova(m_y1)
+print(anova_y1)
 
 #-----------------------------------------------------------------------
-# Predição.
+# Ajuste do Modelo para y3 (LCOE)
+m_y3 <- rsm::rsm(y3 ~ SO(A, B, C, D), data = dados_coded)
+summary(m_y3)
 
-# Grid fino com valores das variáveis na escala codificada.
-dados_pred <-
-  with(dados,
-       expand.grid(A = seq(-1, 1, length.out = 31),
-                   B = seq(-1, 1, length.out = 31),
-                   C = seq(-1, 1, length.out = 3),
-                   D = seq(-1, 1, length.out = 3),
-                   KEEP.OUT.ATTRS = FALSE)
+# ANOVA do modelo y3
+anova_y3 <- anova(m_y3)
+print(anova_y3)
+
+#-----------------------------------------------------------------------
+# Gráfico de Pareto para y1 e y3
+gerar_pareto <- function(model, response) {
+  t_critico <- qt(0.025, df.residual(model), lower.tail = FALSE)
+  MSE <- deviance(model) / df.residual(model)
+  SE_coef <- sqrt(MSE / nrow(model$model))
+  t0 <- coef(model) / SE_coef
+  t0 <- data.frame(Termos = names(t0)[-1], Efeito = abs(t0[-1]))
+  
+  ggplot(t0, aes(x = reorder(Termos, Efeito), y = Efeito)) +
+    geom_bar(stat = "identity", fill = "lightgreen", color = "darkgreen") +
+    geom_hline(yintercept = t_critico, linetype = "dashed", color = "red") +
+    coord_flip() +
+    labs(
+      title = paste("Gráfico de Pareto dos Efeitos"),
+      subtitle = paste("Resposta:", response),
+      x = "Termos",
+      y = "Efeitos Padronizados"
+    ) +
+    theme_classic()
+}
+
+# Gerar gráficos de Pareto
+pareto_y1 <- gerar_pareto(m_y1, "Energy (kWh)")
+pareto_y3 <- gerar_pareto(m_y3, "LCOE (¢/kWh)")
+
+print(pareto_y1)
+print(pareto_y3)
+
+#-----------------------------------------------------------------------
+# Superfícies de Resposta
+gerar_superficie <- function(model, var_x, var_y, fixed_vars, response) {
+  par(mfrow = c(1, 1))
+  contour(
+    model, 
+    ~ A + B + C + D,
+    at = fixed_vars,
+    xlab = var_x,
+    ylab = var_y,
+    main = paste("Superfície de Resposta para", response),
+    col = terrain.colors(10)
+  )
+}
+
+# Contornos para y1
+gerar_superficie(m_y1, "A", "B", list(C = 0, D = 0), "Energy (kWh)")
+
+# Contornos para y3
+gerar_superficie(m_y3, "A", "B", list(C = 0, D = 0), "LCOE (¢/kWh)")
+
+# Superfície 3D
+persp(m_y1, ~ A + B + C + D, 
+      zlim = c(min(dados$y1), max(dados$y1)),
+      theta = 30, phi = 20, 
+      col = viridis::viridis(40), 
+      contours = "bottom")
+
+#-----------------------------------------------------------------------
+# Predições
+# Grid para predição
+grid_pred <- expand.grid(
+  A = seq(-1, 1, length.out = 31),
+  B = seq(-1, 1, length.out = 31),
+  C = seq(-1, 1, length.out = 3),
+  D = seq(-1, 1, length.out = 3)
+)
+
+# Predição e erro padrão
+pred_y1 <- predict(m_y1, newdata = grid_pred, se.fit = TRUE)
+pred_y3 <- predict(m_y3, newdata = grid_pred, se.fit = TRUE)
+
+# Adicionando resultados ao grid
+grid_pred <- grid_pred %>%
+  mutate(
+    fit_y1 = pred_y1$fit,
+    fit_y3 = pred_y3$fit,
+    se_y1 = pred_y1$se.fit,
+    se_y3 = pred_y3$se.fit
   )
 
-# Pede o valor predito e o erro-padrão para o valor predito.
-dados_pred <-
-  predict(m1, newdata = dados_pred, se.fit = TRUE)[c("fit", "se.fit")] |>
-  as.data.frame() |>
-  bind_cols(dados_pred)
-str(dados_pred)
+#-----------------------------------------------------------------------
+# Função para gerar predições e gráficos
+gerar_grafico_predicao <- function(model, response_name, response_label, color) {
+  # Gerar predições e erro padrão
+  dados_pred <- as.data.frame(dados_coded) %>%
+    mutate(
+      pred = predict(model, newdata = dados_coded),
+      se_pred = predict(model, newdata = dados_coded, se.fit = TRUE)$se.fit
+    )
+  
+  # Preparar os dados para o gráfico
+  plot_dados <- dados_pred %>%
+    pivot_longer(
+      cols = c(A, B, C, D),
+      names_to = "variavel",
+      values_to = "valor_variavel"
+    ) %>%
+    mutate(
+      variavel = case_when(
+        variavel == "A" ~ "A: Geração Solar (W/m²)",
+        variavel == "B" ~ "B: Distância entre Coletores (m)",
+        variavel == "C" ~ "C: Quantidade de Coletores",
+        variavel == "D" ~ "D: Capacidade de Armazenamento (h)",
+        TRUE ~ variavel
+      )
+    ) %>%
+    group_by(variavel, valor_variavel) %>%
+    summarise(media_pred = mean(pred, na.rm = TRUE), .groups = "drop")
+  
+  # Gerar o gráfico
+  ggplot(plot_dados, aes(y = media_pred, x = as.numeric(valor_variavel))) +
+    geom_point(size = 3, color = color) +
+    geom_smooth(method = "lm", formula = y ~ poly(x, 2), se = FALSE, color = color) +
+    facet_wrap(~variavel, scales = "free_x", ncol = 2) +
+    labs(
+      title = "Efeitos Principais para as Respostas",
+      subtitle = paste("Médias das Variáveis para", response_label),
+      x = "",
+      y = response_label
+    ) +
+    scale_y_continuous(labels = label_number(scale_cut = cut_short_scale())) +
+    scale_x_continuous(labels = scales::number_format()) +
+    theme_classic()
+}
 
-# Gráficos dos valores preditos.
-lattice::levelplot(fit ~ A + B | C,
-                   data = dados_pred,
-                   contour = TRUE,
-                   labels = TRUE,
-                   aspect = 1)
-lattice::wireframe(fit ~ A + B | C,
-                   data = dados_pred,
-                   screen = list(z = 45, x = -60),
-                   shade = TRUE)
+#-----------------------------------------------------------------------
+# Gráficos para y1 (Energy) e y3 (LCOE)
+grafico_y1 <- gerar_grafico_predicao(
+  model = m_y1,
+  response_name = "y1",
+  response_label = "Energia (kWh)",
+  color = "#FF2400"
+)
+
+grafico_y3 <- gerar_grafico_predicao(
+  model = m_y3,
+  response_name = "y3",
+  response_label = "LCOE (¢/kWh)",
+  color = "#32CD32"
+)
+
+#-----------------------------------------------------------------------
+# Exibir os gráficos
+print(grafico_y1)
+print(grafico_y3)
 
 
-# Gráficos interativos.
+#-----------------------------------------------------------------------
+
+# graficos plotly
+
+#-----------------------------------------------------------------------
+# Ajuste do Modelo para y1 (Energy) com Curvatura
+m_y1_curvature <- rsm::rsm(y1 ~ SO(A, C, D), data = dados_coded)
+
+#-----------------------------------------------------------------------
+# Grid para Predição - A e C
+grid_pred_AC <- expand.grid(
+  A = seq(-1, 1, length.out = 50),
+  C = seq(-1, 1, length.out = 50),
+  B = 0,  # Fixando B em 0
+  D = 0   # Fixando D em 0 para análise de A e C
+)
+
+# Adicionando Predições para A e C
+grid_pred_AC <- grid_pred_AC %>%
+  mutate(
+    fit = predict(m_y1_curvature, newdata = grid_pred_AC)
+  )
+
+# Convertendo para Forma de Array - A e C
+array_pred_AC <- list(
+  A = unique(grid_pred_AC$A),
+  C = unique(grid_pred_AC$C),
+  fit = matrix(grid_pred_AC$fit, nrow = length(unique(grid_pred_AC$A)))
+)
+
+#-----------------------------------------------------------------------
+# Grid para Predição - A e D
+grid_pred_AD <- expand.grid(
+  A = seq(-1, 1, length.out = 50),
+  D = seq(-1, 1, length.out = 50),
+  B = 0,  # Fixando B em 0
+  C = 0   # Fixando C em 0 para análise de A e D
+)
+
+# Adicionando Predições para A e D
+grid_pred_AD <- grid_pred_AD %>%
+  mutate(
+    fit = predict(m_y1_curvature, newdata = grid_pred_AD)
+  )
+
+# Convertendo para Forma de Array - A e D
+array_pred_AD <- list(
+  A = unique(grid_pred_AD$A),
+  D = unique(grid_pred_AD$D),
+  fit = matrix(grid_pred_AD$fit, nrow = length(unique(grid_pred_AD$A)))
+)
+
+#-----------------------------------------------------------------------
+# Gráfico 3D Interativo com Plotly
 
 library(plotly)
 
-# Gráfico de contornos.
-dados_pred |>
-  filter(C == unique(C)[2]) |>
-  plot_ly(data = _,
-          x = ~A, y = ~B, z = ~fit,
-          type = "contour")
+# Gráfico Interativo para A e C
+plot_AC <- plot_ly(
+  x = array_pred_AC$A,
+  y = array_pred_AC$C,
+  z = array_pred_AC$fit
+  ) %>%
+  add_surface(
+    colors = viridis::turbo(50),
+    contours = list(
+      z = list(
+        show = TRUE,
+        usecolormap = TRUE,
+        highlightcolor = "#ff0000",
+        project = list(z = TRUE)
+      )
+    )
+  ) %>%
+  layout(
+    title = "Interação entre A (Geração Solar) e C (Quantidade de Coletores)",
+    scene = list(
+      xaxis = list(title = "A: Geração Solar (W/m²)"),
+      yaxis = list(title = "C: Quantidade de Coletores"),
+      zaxis = list(title = "Energia (kWh)")
+    ),
+    showlegend = FALSE
+  )
+plot_AC
 
-# Use `mesh3d` para dados no formato longo.
-dados_pred |>
-  filter(C == unique(C)[2]) |>
-  plot_ly(data = _,
-          x = ~A, y = ~B, 
-          z = ~fit,
-          intensity = ~fit,
-          type = "mesh3d",
-          colors = topo.colors(n = 4),
-          contour = list(color = "red", show = TRUE, width = 16))
 
+# Gráfico Interativo para A e D
+plot_AD <- plot_ly(
+  x = array_pred_AD$A,
+  y = array_pred_AD$D,
+  z = array_pred_AD$fit
+) %>%
+  add_surface(
+    colors = viridis::turbo(50),
+    contours = list(
+      z = list(
+        show = TRUE,
+        usecolormap = TRUE,
+        highlightcolor = "#ff0000",
+        project = list(z = TRUE)
+      )
+    )
+  ) %>%
+  layout(
+    title = "Interação entre A (Geração Solar) e D (Capacidade de Armazenamento)",
+    scene = list(
+      xaxis = list(title = "A: Geração Solar (W/m²)"),
+      yaxis = list(title = "D: Capacidade de Armazenamento (h)"),
+      zaxis = list(title = "Energia (kWh)")
+    )
+  )
+
+#-----------------------------------------------------------------------
+# Exibindo os Gráficos Interativos
+plot_AC
+plot_AD
+
+#-----------------------------------------------------------------------
+# Ajuste do Modelo para y3 (LCOE)
+m_y3 <- rsm::rsm(y3 ~ SO(A, B, C, D), data = dados_coded)
+
+#-----------------------------------------------------------------------
+# Grids para Predição
+
+# Grid para A e B
+grid_pred_AB <- expand.grid(
+  A = seq(-1, 1, length.out = 50),
+  B = seq(-1, 1, length.out = 50),
+  C = 0,  # Fixando C em 0
+  D = 0   # Fixando D em 0 para análise de A e B
+) %>%
+  mutate(fit = predict(m_y3, newdata = .))
+
+# Grid para A e C
+grid_pred_AC <- expand.grid(
+  A = seq(-1, 1, length.out = 50),
+  C = seq(-1, 1, length.out = 50),
+  B = 0,  # Fixando B em 0
+  D = 0   # Fixando D em 0 para análise de A e C
+) %>%
+  mutate(fit = predict(m_y3, newdata = .))
+
+# Grid para A e D
+grid_pred_AD <- expand.grid(
+  A = seq(-1, 1, length.out = 50),
+  D = seq(-1, 1, length.out = 50),
+  B = 0,  # Fixando B em 0
+  C = 0   # Fixando C em 0 para análise de A e D
+) %>%
+  mutate(fit = predict(m_y3, newdata = .))
+
+#-----------------------------------------------------------------------
+# Convertendo Grids para Formato de Array
+
+# A e B
+array_pred_AB <- list(
+  A = unique(grid_pred_AB$A),
+  B = unique(grid_pred_AB$B),
+  fit = matrix(grid_pred_AB$fit, nrow = length(unique(grid_pred_AB$A)))
+)
+
+# A e C
+array_pred_AC <- list(
+  A = unique(grid_pred_AC$A),
+  C = unique(grid_pred_AC$C),
+  fit = matrix(grid_pred_AC$fit, nrow = length(unique(grid_pred_AC$A)))
+)
+
+# A e D
+array_pred_AD <- list(
+  A = unique(grid_pred_AD$A),
+  D = unique(grid_pred_AD$D),
+  fit = matrix(grid_pred_AD$fit, nrow = length(unique(grid_pred_AD$A)))
+)
+
+#-----------------------------------------------------------------------
+# Gráficos 3D Interativos com Plotly
+
+library(plotly)
+
+# Gráfico Interativo para A e B
+plot_AB <- plot_ly(
+  x = array_pred_AB$A,
+  y = array_pred_AB$B,
+  z = array_pred_AB$fit
+) %>%
+  add_surface(
+    colors = viridis::inferno(50),
+    contours = list(
+      z = list(
+        show = TRUE,
+        usecolormap = TRUE,
+        highlightcolor = "#ff0000",
+        project = list(z = TRUE)
+      )
+    )
+  ) %>%
+  layout(
+    title = "Interação entre A (Geração Solar) e B (Distância entre Coletores)",
+    scene = list(
+      xaxis = list(title = "A: Geração Solar (W/m²)"),
+      yaxis = list(title = "B: Distância entre Coletores (m)"),
+      zaxis = list(title = "LCOE (¢/kWh)")
+    )
+  )
+
+# Gráfico Interativo para A e C
+plot_AC <- plot_ly(
+  x = array_pred_AC$A,
+  y = array_pred_AC$C,
+  z = array_pred_AC$fit
+) %>%
+  add_surface(
+    colors = viridis::inferno(50),
+    contours = list(
+      z = list(
+        show = TRUE,
+        usecolormap = TRUE,
+        highlightcolor = "#ff0000",
+        project = list(z = TRUE)
+      )
+    )
+  ) %>%
+  layout(
+    title = "Interação entre A (Geração Solar) e C (Quantidade de Coletores)",
+    scene = list(
+      xaxis = list(title = "A: Geração Solar (W/m²)"),
+      yaxis = list(title = "C: Quantidade de Coletores"),
+      zaxis = list(title = "LCOE (¢/kWh)")
+    )
+  )
+
+# Gráfico Interativo para A e D
+plot_AD <- plot_ly(
+  x = array_pred_AD$A,
+  y = array_pred_AD$D,
+  z = array_pred_AD$fit
+) %>%
+  add_surface(
+    colors = viridis::inferno(50),
+    contours = list(
+      z = list(
+        show = TRUE,
+        usecolormap = TRUE,
+        highlightcolor = "#ff0000",
+        project = list(z = TRUE)
+      )
+    )
+  ) %>%
+  layout(
+    title = "Interação entre A (Geração Solar) e D (Capacidade de Armazenamento)",
+    scene = list(
+      xaxis = list(title = "A: Geração Solar (W/m²)"),
+      yaxis = list(title = "D: Capacidade de Armazenamento (h)"),
+      zaxis = list(title = "LCOE (¢/kWh)")
+    )
+  )
+
+#-----------------------------------------------------------------------
+# Exibindo os Gráficos
+
+plot_AB
+plot_AC
+plot_AD
+
+      

@@ -1,2 +1,38 @@
 # Introdução {.unnumbered}
 
+A eficiência e o custo de geração de energia elétrica são temas centrais em discussões sobre sustentabilidade e inovação tecnológica. O aumento da demanda energética global impulsiona a necessidade de explorar tecnologias que combinem eficiência energética e custos reduzidos, especialmente em fontes renováveis. Entre essas fontes, a energia solar concentrada (*Concentrated Solar Power - CSP*) se destaca como uma solução promissora devido ao seu potencial para geração escalável e armazenamento térmico.
+
+Neste contexto, o presente relatório busca explorar os principais fatores que impactam a eficiência e o custo de geração de energia em sistemas de CSP. A análise é baseada no artigo intitulado [**"Modelling and optimization of concentrated solar power using response surface methodology: A comparative study of air, water, and hybrid cooling technique"**]([https://doi.org/10.1016/j.enconman.2024.118915), no qual são utilizados modelos estatísticos e **Metodologias de Superfícies de Resposta (RSM)** para avaliar a interação entre variáveis de projeto e suas implicações nos resultados energéticos e econômicos.
+
+## Objetivo do Estudo
+
+O objetivo deste relatório é reproduzir as análises apresentadas no artigo, utilizando métodos estatísticos e técnicas de modelagem preditiva. Além disso, são investigadas as interações entre fatores de projeto, como:
+
+- Geração Solar (Solar Multiple),
+- Distância entre Coletores,
+- Quantidade de Coletores, e
+- Capacidade de Armazenamento.
+
+Os resultados são avaliados a partir de métricas-chave como:
+
+- Energia gerada (kWh),
+- Custo nivelado de energia (LCOE, ¢/kWh),
+- Fator de capacidade (%),
+- Consumo de água, e
+- Área de ocupação.
+
+## Estrutura do Relatório
+
+Este relatório está organizado da seguinte maneira:
+
+1. **Motivação e Problema Prático**: Explanação do contexto energético e dos desafios enfrentados em sistemas CSP.
+2. **Metodologia**: Apresentação dos delineamentos experimentais, modelos estatísticos e métodos analíticos empregados.
+3. **Análise e Resultados**: Reproduções das análises estatísticas, incluindo quadros de ANOVA, estimativas de parâmetros, e gráficos de superfícies de resposta.
+4. **Conclusão**: Reflexão sobre os impactos práticos do estudo e comentários sobre a metodologia utilizada.
+
+Com esta estrutura, espera-se proporcionar uma visão clara e objetiva sobre o problema prático em questão, os métodos adotados e as conclusões alcançadas. Este trabalho não apenas reproduz os resultados do artigo, mas também busca ampliar a compreensão sobre as decisões analíticas e o impacto prático das descobertas apresentadas.
+
+## Apresentação
+
+[Slides](./slides/slides.html)
+
