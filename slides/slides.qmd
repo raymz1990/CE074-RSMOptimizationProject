@@ -13,6 +13,7 @@ format:
     footer: 'Estatística e Ciência de Dados - UFPR'
     incremental: true
     transition: slide
+    output-file: slides.html
 ---
 
 ```{r setup, include=FALSE}
