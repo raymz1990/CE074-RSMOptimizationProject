@@ -13,7 +13,7 @@ project:
 book:
   title: "CE074 Controle de Processos Industriais"
   author: ["Miqueias Teixeira da Silva", "Raymundo Eduardo Pilz"]
-  date: "today"
+  date: "2024-12-10"
   # description: |
   #   Projeto integrador de análise do comportamento da energia solar usando a Metodologia de Resposta de Superfície
   # cover-image: images/cover-2e-small.png

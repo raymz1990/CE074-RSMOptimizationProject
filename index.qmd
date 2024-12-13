@@ -34,5 +34,6 @@ Com esta estrutura, espera-se proporcionar uma visão clara e objetiva sobre o p
 
 ## Apresentação
 
-[Slides](./slides/slides.html)
+- [Slides](./slides/slides.html)
+- [Apresentação](https://youtu.be/ipm_T2zBg7E)
 
